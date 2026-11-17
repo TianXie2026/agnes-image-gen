@@ -4,7 +4,7 @@
 
 import { randomBytes } from 'node:crypto'
 
-export const VERSION = '0.6.0'
+export const VERSION = '0.7.0'
 export const TOOL_NAME = 'agnes_image_generate'
 export const ROUTE_PREFIX = '/agnes-image-gen'
 
@@ -21,6 +21,18 @@ export const MIN_TIMEOUT_MS = 30000
 export const MAX_TIMEOUT_MS = 600000
 export const MAX_IMAGES = 4
 export const MAX_BODY_BYTES = 128 * 1024
+/** 参考图上传走独立上限（参考图可能是几 MB 的原图）。 */
+export const MAX_REFERENCE_BYTES = 24 * 1024 * 1024
+export const MAX_UPLOAD_NAME = 80
+/** 参考图落在输出目录下的隐藏目录，不进图库列表。 */
+export const REF_DIR = '.refs'
+export const REF_TTL_DAYS = 7
+export const REF_MEDIA = {
+  'image/png': '.png',
+  'image/jpeg': '.jpg',
+  'image/webp': '.webp',
+  'image/gif': '.gif',
+}
 export const MAX_PROMPT_CHARS = 4000
 export const MAX_SOURCES = 8
 export const MAX_SOURCE_LABEL = 40
@@ -98,6 +110,35 @@ export function readPrompt(input) {
   const prompt = readText(input?.prompt)
   if (!prompt) throw new AppError('bad-request', 'prompt 不能为空：请描述要生成的画面。', 400)
   return prompt
+}
+
+/**
+ * 模型是否支持图生图：'yes' | 'no' | 'unknown'。
+ * 上游 /models 不带能力字段（只有 id），所以这里按模型家族推断；
+ * 客户端拿到上游显式标志时优先用上游的。
+ */
+const IMG2IMG_KNOWN_YES = [/^agnes-image-2\.[0-9]+-flash$/i, /^agnes-image-2\.[0-9]+$/i]
+const IMG2IMG_KNOWN_NO = [/^agnes-[0-9]+\.[0-9]+-(flash|pro)$/i, /^agnes-image-[0-9]+\.?[0-9]*-?nano$/i]
+
+export function img2imgSupport(model) {
+  const id = readText(model)
+  if (!id) return 'unknown'
+  if (IMG2IMG_KNOWN_YES.some((pattern) => pattern.test(id))) return 'yes'
+  if (IMG2IMG_KNOWN_NO.some((pattern) => pattern.test(id))) return 'no'
+  return 'unknown'
+}
+
+/** 上传参考图时用的展示名：去扩展名、清洗非法字符、截断。 */
+export function sanitizeUploadName(name) {
+  const raw = readText(name)
+  const base = raw.replace(/\.[^.]*$/, '')
+  const cleaned = base
+    .replace(/[<>:"/\\|?*\u0000-\u001f]/g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, MAX_UPLOAD_NAME)
+  return cleaned || 'reference'
 }
 
 /** 档位 1K–4K，或精确 WxH（宽高 64–8192）；容忍 * 与 ×。 */

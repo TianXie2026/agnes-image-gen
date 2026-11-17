@@ -11,16 +11,20 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { buildRequestBody } from '../api.js'
 import {
   DEFAULT_OUTPUT_DIR,
+  decodeDataUrl,
   defaultOutputDir,
   deleteImageMeta,
   exists,
   listImageFiles,
   metaPathFor,
   pickDefaultOutputDir,
+  purgeReferences,
   readImageMeta,
   readImageSize,
+  refsDir,
   resolveOutputDir,
   sanitizeBaseName,
+  saveReference,
   writeImageMeta,
   isInside,
   timestampName,
@@ -28,6 +32,7 @@ import {
 import {
   LEGACY_RECORD_KEY,
   MAX_SOURCES,
+  img2imgSupport,
   isSourceId,
   nextSourceId,
   normalizeBaseUrl,
@@ -38,6 +43,7 @@ import {
   normalizeSources,
   pixelHint,
   resolveDefaultSourceId,
+  sanitizeUploadName,
   sourceRecordKey,
 } from '../params.js'
 import { optimizePrompt } from '../optimize.js'
@@ -277,6 +283,57 @@ await test('图片 sidecar 元数据写入 / 读取 / 删除', async () => {
 
     await deleteImageMeta(file)
     assert.equal(await exists(metaPathFor(file)), false)
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+await test('img2imgSupport 按模型名判断图生图能力', () => {
+  assert.equal(img2imgSupport('agnes-image-2.5-flash'), 'yes')
+  assert.equal(img2imgSupport('agnes-image-2.1-flash'), 'yes')
+  assert.equal(img2imgSupport('agnes-image-2.0'), 'yes')
+  assert.equal(img2imgSupport('agnes-3.0-flash'), 'no')
+  assert.equal(img2imgSupport('agnes-2.5-pro'), 'no')
+  assert.equal(img2imgSupport('agnes-image-3.0-nano'), 'no')
+  assert.equal(img2imgSupport('some-other-model'), 'unknown')
+  assert.equal(img2imgSupport(''), 'unknown')
+  assert.equal(sanitizeUploadName('   我的参考图 (1).png '), '我的参考图-(1)')
+  assert.equal(sanitizeUploadName(''), 'reference')
+})
+
+await test('参考图 data URL 解码 / 落盘 / 过期清理', async () => {
+  const png = Buffer.alloc(33)
+  Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(png, 0)
+  png.writeUInt32BE(13, 8)
+  png.write('IHDR', 12, 'ascii')
+  png.writeUInt32BE(640, 16)
+  png.writeUInt32BE(480, 20)
+
+  const dataUrl = `data:image/png;base64,${png.toString('base64')}`
+  const decoded = decodeDataUrl(dataUrl)
+  assert.equal(decoded.mediaType, 'image/png')
+  assert.equal(decoded.bytes.length, png.length)
+  assert.equal(decodeDataUrl('data:text/plain;base64,AAAA'), null)
+  assert.equal(decodeDataUrl('data:image/svg+xml;base64,AAAA'), null)
+  assert.equal(decodeDataUrl('not-a-data-url'), null)
+  assert.equal(decodeDataUrl(null), null)
+
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'agnes-ref-'))
+  try {
+    const target = refsDir(dir)
+    const saved = await saveReference({ dir: target, name: 'My Photo.png', bytes: png, mediaType: 'image/png' })
+    assert.equal(saved.name.endsWith('.png'), true)
+    assert.equal(await exists(saved.path), true)
+    assert.equal(saved.bytes, png.length)
+    assert.equal(saved.width, 640)
+    assert.equal(saved.height, 480)
+    // 参考图不进入图库列表。
+    assert.deepEqual(await listImageFiles(dir, 5), [])
+
+    // 未过期：一个都不删；过期 8 天后：全部清掉。
+    assert.equal(await purgeReferences(target, Date.now()), 0)
+    assert.equal(await purgeReferences(target, Date.now() + 8 * 24 * 60 * 60 * 1000), 1)
+    assert.equal(await exists(saved.path), false)
   } finally {
     await rm(dir, { recursive: true, force: true })
   }

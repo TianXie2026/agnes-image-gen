@@ -7,6 +7,8 @@ import { statfsSync, statSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 
+import { MAX_UPLOAD_NAME, REF_DIR, REF_MEDIA, REF_TTL_DAYS, sanitizeUploadName } from './params.js'
+
 const EXTENSIONS = {
   'image/png': '.png',
   'image/jpeg': '.jpg',
@@ -345,6 +347,84 @@ export async function exists(target) {
   } catch {
     return false
   }
+}
+
+/**
+ * 解析 `data:image/(png|jpeg|webp|gif);base64,...`。
+ * 只接受这四种图片 MIME；格式不对或 base64 解不出来时返回 null。
+ * @returns {{ bytes: Buffer, mediaType: string } | null}
+ */
+export function decodeDataUrl(text) {
+  if (typeof text !== 'string') return null
+  const match = /^data:(image\/(?:png|jpeg|webp|gif));base64,([A-Za-z0-9+/=\s]+)$/i.exec(text.trim())
+  if (!match) return null
+  const mediaType = match[1].toLowerCase()
+  if (!REF_MEDIA[mediaType]) return null
+  let bytes
+  try {
+    bytes = Buffer.from(match[2].replace(/\s+/g, ''), 'base64')
+  } catch {
+    return null
+  }
+  if (!bytes?.length) return null
+  return { bytes, mediaType }
+}
+
+/** 参考图目录：`<输出目录>\.refs`。 */
+export function refsDir(outputDir) {
+  return path.join(path.resolve(outputDir), REF_DIR)
+}
+
+/**
+ * 保存一张上传的参考图到 `<输出目录>\.refs`。
+ * @param {{ dir: string, name?: string, bytes: Buffer, mediaType: string }} input
+ * @returns {Promise<{path: string, name: string, bytes: number, width?: number, height?: number}>}
+ */
+export async function saveReference({ dir, name, bytes, mediaType }) {
+  const target = path.resolve(dir)
+  await mkdir(target, { recursive: true })
+  const ext = REF_MEDIA[mediaType] || '.png'
+  const base = sanitizeUploadName(name).slice(0, MAX_UPLOAD_NAME)
+  const stamp = Date.now().toString(36)
+  const random = Math.random().toString(16).slice(2, 8).padEnd(6, '0')
+  const file = path.join(target, `ref-${stamp}-${random}${ext}`)
+  await writeFile(file, bytes)
+  const size = readImageSize(bytes)
+  return {
+    path: file,
+    name: `${base}${ext}`,
+    bytes: bytes.length,
+    ...(size ? { width: size.width, height: size.height } : {}),
+  }
+}
+
+/**
+ * 清理过期参考图（默认 7 天）。只是顺手打扫，失败不影响上传。
+ * @returns {Promise<number>} 删除的文件数
+ */
+export async function purgeReferences(dir, now = Date.now()) {
+  const target = path.resolve(dir)
+  const cutoff = now - REF_TTL_DAYS * 24 * 60 * 60 * 1000
+  let entries
+  try {
+    entries = await readdir(target, { withFileTypes: true })
+  } catch {
+    return 0
+  }
+  let removed = 0
+  for (const entry of entries) {
+    if (!entry.isFile() || !entry.name.startsWith('ref-')) continue
+    const full = path.join(target, entry.name)
+    try {
+      const info = await stat(full)
+      if (info.mtimeMs >= cutoff) continue
+      await unlink(full)
+      removed += 1
+    } catch {
+      // 正在被读或被删掉的竞态：忽略。
+    }
+  }
+  return removed
 }
 
 /** target 是否位于 dir 之内（两者都应是已经 resolve/realpath 的绝对路径）。 */

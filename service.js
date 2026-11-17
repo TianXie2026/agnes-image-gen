@@ -10,14 +10,18 @@ import { buildRequestBody, generateImage, listModels, sniffMediaType } from './a
 import {
   defaultOutputDir,
   defaultOutputInfo,
+  decodeDataUrl,
   deleteImageMeta,
   invalidateDefaultOutputDir,
   isInside,
   listImageFiles,
+  purgeReferences,
   readImageSize,
   readLocalImage,
+  refsDir,
   resolveOutputDir,
   saveImageFile,
+  saveReference,
   writeImageMeta,
 } from './files.js'
 import { optimizePrompt } from './optimize.js'
@@ -26,6 +30,7 @@ import {
   DEFAULT_OPTIMIZE_MODEL,
   MAX_IMAGES,
   MAX_PROMPT_CHARS,
+  MAX_REFERENCE_BYTES,
   MAX_SOURCES,
   MAX_TIMEOUT_MS,
   MIN_TIMEOUT_MS,
@@ -50,6 +55,7 @@ import {
   readPrompt,
   readText,
   resolveDefaultSourceId,
+  sanitizeUploadName,
   toAppError,
 } from './params.js'
 import { SecretStore } from './secret.js'
@@ -110,6 +116,9 @@ export class ImageService {
     const defaultRow = sources.find((row) => row.isDefault) ?? sources[0]
     const job = this.info(jobId) ?? this.info(this.lastJobId)
     const defaultInfo = defaultOutputInfo()
+    const cachedModels = defaultRow ? this.modelsCache.get(defaultRow.id)?.value?.models : undefined
+    const imageModels = (cachedModels ?? []).filter((item) => /image/i.test(item.id))
+    const modelOptions = imageModels.length ? imageModels : MODEL_CHOICES.map((id) => ({ id }))
     return {
       ok: true,
       version: VERSION,
@@ -134,7 +143,7 @@ export class ImageService {
         envName: this.settings.apiKeyEnv,
       },
       caps: {
-        models: MODEL_CHOICES.map((id) => ({ id })),
+        models: modelOptions,
         optimizeModels: uniqueModels([...OPTIMIZE_MODEL_CHOICES, ...this.chatModels]).map((id) => ({ id })),
         sizes: SIZE_CHOICES,
         ratios: RATIO_CHOICES,
@@ -142,6 +151,7 @@ export class ImageService {
         maxImages: MAX_IMAGES,
         maxSources: MAX_SOURCES,
         maxPromptChars: MAX_PROMPT_CHARS,
+        maxReferenceBytes: MAX_REFERENCE_BYTES,
         timeout: { min: MIN_TIMEOUT_MS, max: MAX_TIMEOUT_MS },
       },
       diagnostics: {
@@ -412,11 +422,11 @@ export class ImageService {
     try {
       const result = await listModels({ baseUrl: source.baseUrl, apiKey, timeoutMs })
       const ids = result.models.map((item) => item.id)
-      const imageModels = ids.filter((id) => /image/i.test(id))
+      const imageModels = result.models.filter((item) => /image/i.test(item.id))
       const chatModels = ids.filter((id) => !/image/i.test(id))
       this.chatModels = uniqueModels([...this.chatModels, ...chatModels])
       const value = {
-        models: (imageModels.length ? imageModels : ids).map((id) => ({ id })),
+        models: imageModels.length ? imageModels : result.models,
         all: ids,
         endpoint: result.endpoint,
         fetchedAt: now,
@@ -572,6 +582,35 @@ export class ImageService {
     const dir = this.settings.outputDir || defaultOutputDir()
     const files = await listImageFiles(dir, limit)
     return { dir, files }
+  }
+
+  // ---------------------------------------------------------------- 参考图
+
+  /**
+   * 面板上传的参考图：data URL 解码后写进 `<输出目录>\.refs`。
+   * 参考图不进图库、不写 sidecar；过期文件顺手清理。
+   */
+  async saveReference(input) {
+    const body = input && typeof input === 'object' ? input : {}
+    const decoded = decodeDataUrl(body.dataUrl)
+    if (!decoded) throw new AppError('bad-image', '参考图必须是 png/jpeg/webp/gif 的 data URL。', 400)
+    if (decoded.bytes.length > MAX_REFERENCE_BYTES) {
+      const limit = Math.round(MAX_REFERENCE_BYTES / (1024 * 1024))
+      throw new AppError('too-large', `参考图不能超过 ${limit} MB。`, 413)
+    }
+    const dir = refsDir(this.settings.outputDir || defaultOutputDir())
+    await purgeReferences(dir).catch(() => 0)
+    try {
+      const saved = await saveReference({
+        dir,
+        name: sanitizeUploadName(body.name),
+        bytes: decoded.bytes,
+        mediaType: decoded.mediaType,
+      })
+      return { ok: true, reference: saved }
+    } catch (error) {
+      throw new AppError('save-failed', `参考图保存失败：${messageOf(error)}`, 500)
+    }
   }
 
   /** 读取输出目录里的图片给面板显示。/image?path= 的守卫也在这里。 */

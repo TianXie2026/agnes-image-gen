@@ -3,7 +3,7 @@
 // 该闸的 cookie 行为在 Desktop 未验证（dsh-pet 同样直接注册裸路由）。这里自己做守卫：
 // 只认回环 Host、拒绝跨站 fetch、变更类请求必须是 application/json（强制 CORS 预检）。
 
-import { AppError, MAX_BODY_BYTES, ROUTE_PREFIX } from './params.js'
+import { AppError, MAX_BODY_BYTES, MAX_REFERENCE_BYTES, ROUTE_PREFIX } from './params.js'
 
 const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '::1', '[::1]'])
 
@@ -19,6 +19,7 @@ const ROUTES = [
   { path: '/history', method: 'GET' },
   { path: '/image', method: 'GET' },
   { path: '/delete', method: 'POST' },
+  { path: '/reference', method: 'POST' },
   { path: '/reveal', method: 'POST' },
 ]
 
@@ -111,6 +112,11 @@ async function handleRequest({ request, response, service, logger }) {
           return
         }
         sendJson(response, 200, await service.deleteImage(body?.path))
+        return
+      }
+      case '/reference': {
+        const body = await readJsonBody(request, MAX_REFERENCE_BYTES)
+        sendJson(response, 200, await service.saveReference(body))
         return
       }
       case '/cancel': {

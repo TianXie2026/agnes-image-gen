@@ -183,6 +183,27 @@ if (baseUrlArg) {
   }
 }
 
+// 4b) 参考图上传（data URL → 输出目录\.refs）
+let referencePath = ''
+{
+  // 1×1 RGBA PNG（合法图片，能被上游解码）。
+  const png = Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+    'base64',
+  )
+  const dataUrl = `data:image/png;base64,${png.toString('base64')}`
+  const response = await post('/reference', { name: 'route-smoke.png', dataUrl })
+  if (response.status === 200 && response.payload?.reference?.path) {
+    referencePath = response.payload.reference.path
+    ok('POST /reference', `参考图 ${response.payload.reference.name} · ${response.payload.reference.bytes} B`)
+  } else {
+    fail('POST /reference', `HTTP ${response.status}：${response.payload?.error?.message ?? ''}`)
+  }
+  const bad = await post('/reference', { name: 'x.txt', dataUrl: 'data:text/plain;base64,AAAA' })
+  if (bad.status === 400) ok('POST /reference 拒绝非图片 data URL')
+  else fail('POST /reference 拒绝非图片 data URL', `HTTP ${bad.status}`)
+}
+
 // 5) 提示词优化（可选）
 if (!skipOptimize) {
   const response = await post('/optimize', { prompt: '一只橘猫坐在窗台上', sourceId })
@@ -200,6 +221,7 @@ if (wantGenerate) {
     size: '1K',
     ratio: '1:1',
     sourceId,
+    ...(referencePath ? { images: [referencePath] } : {}),
   })
   if (started.status !== 200 || !started.payload?.jobId) {
     fail('POST /generate', `HTTP ${started.status} ${JSON.stringify(started.payload)}`)
@@ -234,6 +256,11 @@ if (wantGenerate) {
         entry?.meta?.prompt
           ? ok('history 带 sidecar 元数据', `prompt=${String(entry.meta.prompt).slice(0, 18)}…`)
           : fail('history 带 sidecar 元数据', entry ? 'meta 缺失' : '列表里没有这张图')
+        if (referencePath && entry?.meta) {
+          entry.meta.mode === 'img2img' && entry.meta.refs === 1
+            ? ok('sidecar 记下图生图模式', `mode=${entry.meta.mode} refs=${entry.meta.refs}`)
+            : fail('sidecar 记下图生图模式', `mode=${entry.meta.mode} refs=${entry.meta.refs}`)
+        }
         const removed = await post('/delete', { path: result.path })
         removed.status === 200 && removed.payload?.ok
           ? ok('POST /delete 删除测试图', removed.payload.path ?? result.path)

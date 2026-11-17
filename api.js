@@ -131,9 +131,15 @@ export async function listModels({ baseUrl, apiKey, timeoutMs = 30000, signal })
   }
   const rows = Array.isArray(payload?.data) ? payload.data : []
   const models = rows
-    .map((row) => (typeof row === 'string' ? row : row?.id))
-    .filter((id) => typeof id === 'string' && id.trim())
-    .map((id) => ({ id: id.trim() }))
+    .map((row) => (typeof row === 'string' ? { id: row } : row))
+    .filter((row) => typeof row?.id === 'string' && row.id.trim())
+    .map((row) => {
+      const id = row.id.trim()
+      const flag = row.supports_img2img ?? row.supportsImg2Img ?? row?.features?.img2img
+      const item = { id }
+      if (typeof flag === 'boolean') item.img2img = flag
+      return item
+    })
   return { models, endpoint }
 }
 
