@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Agnes image generator",
+    "description": "The sidebar Image entry opens two pages. Create: write a prompt (with one-click AI polish) and pick source/model/ratio on the left, see the result on the right. Gallery: history grouped by date, with multi-select bulk delete. Settings can hold several API sources — each source's key is stored encrypted, never in plain text.",
+    "detail": "docs/DETAIL.md"
+  }
+}

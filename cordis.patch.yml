@@ -1,0 +1,4 @@
+- insert:
+    - id: agnes-image-gen
+      name: '@tianxie2026/agnes-image-gen'
+      config: {}
