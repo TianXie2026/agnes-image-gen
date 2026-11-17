@@ -1,39 +1,59 @@
+<div align="center">
+
 # 生图 · agnes-image-gen
 
-给 [DeepSeek Harness](https://github.com/deepseek-ai) 用的第三方生图插件：侧边栏「生图」双页面板（画图 / 图库）+ 设置页（多 API 来源 + 加密密钥）+ 对话工具 `agnes_image_generate`。
+**给 DeepSeek Harness 的第三方生图插件** — 侧栏「生图」双页面板 + 多 API 来源 + DPAPI 加密密钥 + 对话工具
 
-<img src="docs/screenshots/sample-lighthouse.png" alt="示例：海岸灯塔" width="49%"> <img src="docs/screenshots/sample-lamp.png" alt="示例：台灯与旧书" width="49%">
+[![License](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
+[![Version](https://img.shields.io/github/v/release/TianXie2026/agnes-image-gen?label=version&color=blue)](https://github.com/TianXie2026/agnes-image-gen/releases)
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D6)](#系统要求)
+[![DSH](https://img.shields.io/badge/DSH-%E2%89%A5%200.2.2--rc.3-4b32c3)](#系统要求)
+[![Stars](https://img.shields.io/github/stars/TianXie2026/agnes-image-gen?style=social)](https://github.com/TianXie2026/agnes-image-gen/stargazers)
 
-> 示例图由插件调用 `agnes-image-2.5-flash` 生成，未经后期处理。
+<img src="docs/screenshots/sample-lighthouse.png" alt="示例：黄昏海岸灯塔" width="49%"> <img src="docs/screenshots/sample-lamp.png" alt="示例：台灯与旧书" width="49%">
 
-## 功能
+<sub>两张示例图都由插件调用 `agnes-image-2.5-flash` 生成，未经后期处理。</sub>
 
-- **侧栏「生图」入口**：`画图` 页分「文生图 / 图生图」，左列写提示词、选来源/模型/尺寸/比例，右列直接看大图；`图库` 页把历史图片按日期分组，支持多选、按组全选、批量删除、批量送到参考图。
-- **图片查看器**：点任意大图可滚轮/按钮缩放（0.25×–8×）、按住拖动平移、上一张/下一张翻页，能下载、复制提示词、打开所在文件夹，并显示这张图的完整生成参数；「关闭」在右上角，覆盖层会自动避开 Windows 标题栏，不会和窗口按钮抢位置。
-- **图生图 / 参考图**：在「图生图」模式点上传框或把图片拖进去（≤4 张），也能在图库里勾选后一键「发送到参考图」（可追加或替换原有参考图），配提示词即可改图或合成。
-- **模型能力提示**：按模型名判断是否支持图生图；明确不支持时红条禁用生成，不确定时黄条提醒试一下。
-- **图片带元数据**：每张生成的图旁边写一个同名 `.json`（提示词、模型、尺寸、比例、来源、耗时、体积等），图库与查看器直接读取；删图时一并删掉。
-- **多 API 来源**：可以加一个或多个 OpenAI 兼容的图片 API（Base URL + Key），面板与工具都能按名称/id 选；不选时用默认来源。
-- **密钥不明文落盘**：每个来源的 Key 用 Windows DPAPI（当前用户）加密后存进 DSH 凭据库，配置里只有变量名。
-- **提示词优化**：一键让同一来源的对话模型改写提示词，用不用由你决定，可撤销。
-- **对话里也能画**：Agent 调用 `agnes_image_generate`，结果在会话里显示缩略图 + 参数行。
-- **中英双语**、跟随 DSH 主题、无遥测。
+</div>
+
+---
+
+## 它是什么
+
+把「生图」搬进 DSH 侧边栏：左边写提示词、选来源/模型/尺寸/比例，右边直接看大图；生成过的图自动进「图库」，按日期分组、可多选、可批量删除、可一键送回参考图。也可以直接在对话里让 Agent 画。
+
+不预置任何 API 地址和密钥——装好后在 **设置 → 生图** 里添加你自己的来源（OpenAI 兼容的图片 API，例如 Agnes）。
+
+## 功能一览
+
+| | 能力 |
+|---|---|
+| 🎨 **画图** | 文生图 / 图生图两种模式，左控右图；模型、尺寸（1K–4K 或精确 `WxH`）、比例（8 档）可选，实时显示预计像素 |
+| 🖼 **查看器** | 0.25×–8× 缩放、拖动平移、`← →` 上一张/下一张、下载、复制提示词、用作参考图、打开文件夹；显示完整生成参数 |
+| 🗂 **图库** | 按本地日期分组，多选/按组全选，批量删除（两步确认），批量发送到参考图 |
+| 🧬 **图生图** | 点击或拖拽上传 ≤4 张参考图，也可从图库选中送入；按模型名提示是否支持图生图（支持 / 不支持 / 不确定） |
+| 🔐 **多来源 + 加密密钥** | 一个或多个 Base URL + Key，按名称切换；Key 用 Windows DPAPI 加密，配置里只有变量名 |
+| ✨ **提示词优化** | 一键让同一来源的对话模型改写提示词，可撤销 |
+| 📝 **图片元数据** | 每张图旁写同名 `.json`（提示词、模型、尺寸、比例、来源、耗时、体积），删图一起删 |
+| 💬 **对话工具** | `agnes_image_generate`，结果在会话里显示缩略图 + 参数行，也能作为图生图输入 |
+| 🌓 **细节** | 中英双语、跟随 DSH 主题、无构建步骤、无遥测 |
 
 ## 系统要求
 
 | 项 | 要求 |
 |---|---|
-| 系统 | Windows 10 / 11（密钥加密依赖 DPAPI；「打开文件夹」调用资源管理器） |
-| DeepSeek Harness | ≥ `0.2.2-rc.3` |
+| 系统 | **Windows 10 / 11**（密钥加密依赖 DPAPI；「打开文件夹」调用资源管理器） |
+| DeepSeek Harness | **≥ `0.2.2-rc.3`** |
 | 其它 | 不需要 Node/pnpm，不需要构建；插件是纯 JS bundle |
 
-非 Windows 上插件仍可加载、对话工具可用，但**无法保存 API Key**（保存时会明确报 `unsupported`）；`打开文件夹` 变为无操作。
+非 Windows 上插件仍可加载、对话工具可用，但**无法保存 API Key**（会明确报 `unsupported`），「打开文件夹」变为无操作。
 
 ## 安装
 
-三种方式任选其一。装完都要**关闭再启用插件**（Host 代码生效），然后**刷新页面**（Client 代码生效）。
+装完都要**关闭再启用插件**（Host 代码生效），然后**刷新页面**（Client 代码生效）。
 
-### A. 从 GitHub 地址安装（推荐）
+<details open>
+<summary><b>A. 从 GitHub 地址安装（推荐）</b></summary>
 
 在 DSH 里让 Agent 或插件管理器执行：
 
@@ -41,66 +61,67 @@
 plugin_manager install_bundle, target = https://github.com/TianXie2026/agnes-image-gen
 ```
 
-`install_bundle` 支持 npm 包名、git 地址、tarball、本机绝对路径。
+`install_bundle` 支持 npm 包名、git 地址、tarball、本机绝对路径；相对路径会被拒绝。
 
-### B. 下载 ZIP 解压后装
+</details>
+
+<details>
+<summary><b>B. 下载 ZIP 解压后安装</b></summary>
 
 1. 打开 <https://github.com/TianXie2026/agnes-image-gen> → `Code` → `Download ZIP`。
 2. 解压到任意目录（例如 `D:\plugins\agnes-image-gen`）。
 3. `plugin_manager install_bundle, target = D:\plugins\agnes-image-gen`（必须是**解压后的绝对路径**，且目录里直接有 `package.json`）。
 
-### C. 从 Releases 装
+</details>
 
-1. 到 <https://github.com/TianXie2026/agnes-image-gen/releases> 下载最新的 `agnes-image-gen-0.7.0.tgz`。
+<details>
+<summary><b>C. 从 Releases 安装（tgz）</b></summary>
+
+1. 到 [Releases](https://github.com/TianXie2026/agnes-image-gen/releases) 下载最新的 `agnes-image-gen-0.8.1.tgz`。
 2. `plugin_manager install_bundle, target = <tgz 的绝对路径>`。
+
+</details>
 
 ### 安装后核对
 
-- `plugin_manager list_plugins`：能看到生图插件且为 enabled（显示名是 `Agnes 生图`）。
+- `plugin_manager list_plugins`：能看到生图插件且为 enabled（显示名 **Agnes 生图**）。
 - 刷新页面后，左侧栏出现「生图」。
 - 设置里出现「生图」一节。
 
-## 首次配置
+## 快速开始（3 步）
 
-插件安装后**不包含任何 API 地址和密钥**，需要你自己填：
+1. **加来源**：设置 → 生图 →「API 来源」→ 添加来源，填名称、Base URL、API Key，保存后点「测试连接」。
+2. **试画一张**：侧栏「生图」→ 画图页，写提示词，按 `Ctrl/Cmd + Enter`。
+3. **回头找图**：切到「图库」，按日期分组浏览；点开可放大、下载、复制提示词。
 
-1. 打开 设置 → 生图 →「API 来源」→ 添加来源。
-2. 填名称（随意）、Base URL（例如 `https://api.agnes-ai.cn/v1`）、API Key，保存。
-3. 点「测试连接」，能拉到模型列表即成功。
-4. 有多个来源时，用「设为默认」决定不指定来源时用哪个。
+> Base URL 要带版本段，例如 `https://api.agnes-ai.cn/v1`（插件会自己拼 `/images/generations`、`/models`、`/chat/completions`）。
 
-> 也可以直接在 设置 → 生图 → 默认 里改默认模型（默认 `agnes-image-2.5-flash`）、默认尺寸（`2K`）、默认比例（`1:1`）、超时和输出目录。
+## 用法细节
 
-## 用法
+### 画图页
 
-### 侧边栏「生图」
+- 顶部切「文生图 / 图生图」。左列：来源（多来源时才出现）、模型、尺寸、比例、提示词、生成/取消。右列：大图、参数行、操作。
+- 提示词支持 `Ctrl/Cmd + Enter` 生成；写不好就让「优化提示词」改写，不满意点「撤销」。
+- **图生图**：点上传框或把图片拖进虚线框（≤4 张），也能在图库勾选后「发送到参考图」。模型不支持时会红条禁用生成，不确定时黄条提醒。
+- 结果区只保留三个动作：**再来一张**、**添加到参考图**（替换参考图并清空提示词，直接转图生图）、**删除图片**（两步确认）。
 
-**画图**（顶部可切「文生图 / 图生图」）：
+### 图库
 
-1. 写提示词（`Ctrl/Cmd + Enter` 直接生成）；不擅长写就点「优化提示词」，满意再生成，不满意点「撤销」。
-2. 需要时切来源，选模型 / 尺寸（`1K/2K/3K/4K` 或精确 `WxH`）/ 比例（8 档），下面会显示预计像素。
-3. **图生图**：点上传框选择图片，或把图片拖进虚线框（最多 4 张）；也可以在图库勾选后「发送到参考图」。选到明确不支持图生图的模型时会出现红色提示并禁用生成；不确定时会黄条提醒。
-4. 点「生成」，可随时「取消」；右列出现大图、参数行（来源 · 模型 · 尺寸 · 比例 · 耗时 · 体积 · 像素）。
-5. 右列操作是「再来一张」「添加到参考图」和「删除图片」（点两次确认）：点大图进入查看器（缩放、拖动、下载、复制提示词、用作参考图）。「添加到参考图」会用当前结果替换参考图并清空提示词，方便连续改图。
+- 输出目录里的图片按本地日期分组（今天 / 昨天 / M月D日），一次最多列 200 张（mtime 倒序）。
+- 工具栏：刷新、全选、清除选择、发送到参考图、删除选中。画图页已有参考图或提示词时，发送会先问「**追加**」还是「**新建（清空原有）**」。
+- 删除是**删磁盘文件**，两步确认后不可恢复，同名 `.json` 一起删。
 
-> 提示词历史不再显示在控制台里；需要旧提示词请到图库点开图片复制。
+### 查看器
 
-**图库**：
-
-1. 输出目录里的历史图片按本地日期分组（今天 / 昨天 / M月D日）。
-2. 勾选若干张 → 「删除选中」或「发送到参考图」；也可按组全选、清除选择；单张角标 `×` 直接删。画图页已有参考图或提示词时，发送会先让你选「追加」还是「新建（清空原有）」。
-3. 点任意图片打开**查看器**：滚轮或 `+ / −` 缩放、按住拖动平移、双击还原，`← / →` 或工具条按钮切换上一张/下一张；左下工具条是缩放与翻页，右上角是关闭 `×`，右侧是「下载」「复制提示词」「用作参考图」「打开文件夹」，以及提示词与生成参数。查看器从标题栏下方开始，不会挡住窗口的最小化/最大化/关闭。
-4. 删除是**删磁盘文件**，两步确认后不可恢复；同名 `.json` 元数据会一起删。
-
-快捷键：`Ctrl/Cmd + Enter` 生成；大图里 `Esc` 关闭，`← / →` 翻页。
+- 滚轮或 `+ / −` 缩放，按住拖动平移，双击还原；`← / →` 切换上一张/下一张，`Esc` 关闭。
+- 左下工具条常驻显示缩放比例；右上角 `×` 关闭（覆盖层从 Windows 标题栏下方开始，不会挡住窗口按钮）。
+- 右侧：**下载**、**复制提示词**、**用作参考图**、**打开文件夹**，以及模型/尺寸/比例/像素/来源/耗时/体积/时间/文件名与修订提示词。
 
 ### 对话
 
 直接说「画一张…」，Agent 会调用 `agnes_image_generate`：
 
 > 用 agnes_image_generate 画一张 16:9 的 2K 图：夜晚的江边城市天际线，长曝光
-
-工具参数：
 
 | 参数 | 类型 | 说明 |
 |---|---|---|
@@ -114,7 +135,10 @@ plugin_manager install_bundle, target = https://github.com/TianXie2026/agnes-ima
 | `save_dir` | string | 本次输出目录（绝对路径） |
 | `file_name` | string | 文件名（不含扩展名），非法字符自动清洗 |
 
-## 配置项
+## 配置
+
+<details>
+<summary><b>插件配置项（设置页可改）</b></summary>
 
 | 键 | 默认 | 说明 |
 |---|---|---|
@@ -124,29 +148,29 @@ plugin_manager install_bundle, target = https://github.com/TianXie2026/agnes-ima
 | `defaultSize` | `2K` | 同上 |
 | `defaultRatio` | `1:1` | 同上 |
 | `optimizeModel` | `agnes-3.0-flash` | 提示词优化模型 |
-| `outputDir` | 自动：空闲最大的非 C 盘 `\Pictures\agnes-image`（只有 C 盘时 `~\Pictures\agnes-image`） | 落盘目录（绝对路径）；设置页可改，或点「选择…」 |
+| `outputDir` | 自动：空闲最大的非 C 盘 `\Pictures\agnes-image`（只有 C 盘时 `~\Pictures\agnes-image`） | 落盘目录（绝对路径） |
 | `timeoutMs` | `300000` | 30–600 秒 |
 | `apiKeyEnv` | `AGNES_API_KEY` | 默认来源没有存储密钥时回退到该环境变量 |
 
-## 密钥与安全
-
-- 每个来源一条凭据记录：`agnes-image-gen/api-key-<sourceId>`；明文**永不**进入插件配置。
-- 保存：`[System.Security.Cryptography.ProtectedData]::Protect(…, CurrentUser)`；密文（base64，`AQAAANCMnd8…` 开头）作为 `kind: grant` 记录的 payload。
-- 读取：解密后按来源缓存 10 分钟；解密失败标记 `unreadable`，设置页提示重新保存。
-- 更换 Windows 用户或换机器后无法解密，需要重填 Key。
-- DSH 凭据库本身是明文 YAML（DSH 默认实现），所以保密性来自 DPAPI，而不是文件权限。
-- 面板走本机 HTTP 路由 `/agnes-image-gen/*`，没有套用 DSH 的会话 cookie 闸门（与 `dsh-pet` 等本地插件一致，桌面端经代理加载页面时 cookie 不可靠）。因此路由自己做守卫：只接受回环 Host、拒绝 `sec-fetch-site: cross-site`、要求带 Origin 时同源、变更请求必须 `application/json`（触发 CORS 预检）、body ≤128 KB（`/reference` 上传参考图放宽到 24 MB）；`/image` 与 `/delete` 只允许操作输出目录内的文件（realpath 比对）。这能挡住跨站页面，但挡不住本机上以你身份运行的恶意程序。
-- 图片与提示词只会发往**你自己填的 Base URL**；插件不含任何遥测或回传。
+</details>
 
 ## 输出目录
 
-- 默认放在**非 C 盘**：按盘符 D–Z 里空闲空间最大的盘，生成 `<盘>:\Pictures\agnes-image`（例如 `D:\Pictures\agnes-image`）；机器只有 C 盘时回落到 `~\Pictures\agnes-image`。
+- 默认放在**非 C 盘**：D–Z 里空闲最大的盘 → `<盘>:\Pictures\agnes-image`；只有 C 盘时回落到 `~\Pictures\agnes-image`。
 - 文件名 `agnes-YYYYMMDD-HHmmss-xxxxxx.png`，重名自动加 `-2`。
-- 想换目录：设置页输入，或点「选择…」用系统文件夹选择框；也可以单次传 `save_dir`。设置页会显示当前生效目录与默认目录的空闲空间。
-- 上传的参考图存在输出目录下的 `.refs\`，文件名 `ref-*.png`，超过 7 天在下次上传时清理；它们不会出现在图库里。
-- 面板里「删除图片」与图库「删除选中」会直接删磁盘文件，不可恢复（两步确认）。
+- 设置页可改目录（「选择…」调系统文件夹框），并显示当前生效目录与默认目录的空闲空间。
+- 参考图存在输出目录下的 `.refs\`（`ref-*.png`），7 天后在下次上传时清理，不进图库。
 
-## HTTP 路由（Host）
+## 密钥与安全边界
+
+- 每个来源一条凭据记录 `agnes-image-gen/api-key-<sourceId>`；明文**永不**进入插件配置。
+- 加密：`[System.Security.Cryptography.ProtectedData]::Protect(…, CurrentUser)`；密文（base64，`AQAAANCMnd8…` 开头）存为 `kind: grant` 记录的 payload。解密后按来源缓存 10 分钟。
+- 换 Windows 用户或换机器后无法解密，需要重填 Key。DSH 凭据库本身是明文 YAML，保密性来自 DPAPI 而非文件权限。
+- 面板走本机路由 `/agnes-image-gen/*`，**未套用** DSH 的会话 cookie 闸门（与 `dsh-pet` 等本地插件一致，桌面端经代理加载时 cookie 不可靠）。路由自行守卫：只接受回环 Host、拒绝 `sec-fetch-site: cross-site`、带 Origin 时必须同源、变更请求必须 `application/json`、body ≤128 KB（`/reference` 放宽到 24 MB）；`/image` 与 `/delete` 限定输出目录内文件（realpath 比对）。这能挡跨站页面，挡不住本机上以你身份运行的恶意程序。
+- 图片与提示词只发往**你自己填的 Base URL**；无遥测、无回传。
+
+<details>
+<summary><b>HTTP 路由（Host 内部接口）</b></summary>
 
 前缀 `/agnes-image-gen`，全部 JSON、`cache-control: no-store`、错误信封 `{ok:false,error:{code,message}}`：
 
@@ -160,11 +184,13 @@ plugin_manager install_bundle, target = https://github.com/TianXie2026/agnes-ima
 | POST | `/generate` | 建任务，立即返回 `jobId`（可带 `sourceId`） |
 | POST | `/cancel` | `{jobId}` |
 | POST | `/optimize` | `{prompt, sourceId?, model?}` |
-| POST | `/reference` | `{name, dataUrl}` 上传参考图（png/jpeg/webp/gif，≤24 MB）→ 存到输出目录 `.refs\` |
+| POST | `/reference` | `{name, dataUrl}` 上传参考图（png/jpeg/webp/gif，≤24 MB）→ `.refs\` |
 | POST | `/delete` | `{path}` 单张，或 `{paths:[…]}` 批量（≤100，返回 `{deleted,failed}`） |
 | GET | `/history?limit=` | 输出目录图片（mtime 倒序，上限 200） |
 | GET | `/image?job=` / `?path=` | 取图（`?path=` 只允许输出目录内） |
 | POST | `/reveal` | 在资源管理器里定位文件（仅 Windows） |
+
+</details>
 
 ## 开发与自测
 
@@ -184,31 +210,41 @@ node .\tools\smoke.mjs "一只橘猫坐在窗台上，水彩"
 node --check index.js; node --check service.js; node --check http.js; node --check client.js
 ```
 
+代码结构：Host 侧 `index.js`（注册工具/路由）+ `service.js`（来源、任务、历史、删除）+ `http.js`（路由与守卫）+ `secret.js`（DPAPI）+ `sources.js`/`optimize.js`/`files.js`/`api.js`/`params.js`；Client 侧单文件 `client.js`（面板、图库、查看器、设置页、工具卡片）。
+
 ## 已知限制
 
-- 一次只返回一张图（上游不支持 `n`）。
-- 上游只有提示词/模型/尺寸/比例；没有 seed、负面提示词、风格参数。
-- 图生图输入支持公网 URL / data URL / 本机绝对路径；本机文件上限 20 MB；上传参考图单张上限 24 MB、最多 4 张，存于输出目录 `.refs\`，超过 7 天自动清理。
-- 图生图能力靠模型名推断（`agnes-image-2.x-flash` 判为支持，`agnes-3.x / agnes-image-nano` 判为不支持，其余「不确定」），如果上游实际支持而这里提示不支持，换个模型名或直接用对话工具传 `images` 即可绕过。
-- 生成较慢（官方建议 60–360s 超时）。
-- 图库一次最多列 200 张（按 mtime 倒序）；更早的图请直接在输出目录里看。
+- 一次只返回一张图（上游不支持 `n`）；上游参数只有提示词/模型/尺寸/比例，没有 seed、负面提示词、风格。
+- 图生图能力靠模型名推断：`agnes-image-2.x-flash` 判为支持，`agnes-3.x` / `agnes-image-nano` 判为不支持，其余「不确定」；判断错时可直接用对话工具传 `images` 绕过。
+- 图生图输入：公网 URL / data URL / 本机绝对路径；本机文件 ≤20 MB；上传参考图单张 ≤24 MB、最多 4 张。
+- 生成较慢（官方建议 60–360 秒超时）；大尺寸更慢。
+- 图库一次最多 200 张；更早的图请直接在输出目录里看。
 - 提示词优化依赖来源的 `/chat/completions`；不支持时会提示换模型。
 - 密钥加密与「打开文件夹」仅 Windows。
 
 ## 常见问题
 
-**装完侧边栏没有「生图」？** 先刷新页面；仍没有就关闭再启用插件，或重启 DSH。
+| 问题 | 处理 |
+|---|---|
+| 装完侧边栏没有「生图」 | 刷新页面；仍没有就关闭再启用插件，或重启 DSH |
+| 提示「还没有可用的 API 来源」 | 设置 → 生图 → API 来源 添加一个，并点「测试连接」 |
+| Key 保存失败 | 非 Windows、PowerShell 不可用，或被安全软件拦截 |
+| 生成慢 / 超时 | 大尺寸与复杂提示词更慢；把超时调到 360 秒再试 |
+| 能换别的生图 API 吗 | 兼容 `POST {baseUrl}/images/generations`（返回 `data[0].b64_json` 或 `data[0].url`）与 `GET {baseUrl}/models` 即可；优化需要 OpenAI 兼容 `/chat/completions` |
 
-**提示「还没有可用的 API 来源」？** 去 设置 → 生图 → API 来源 添加一个，并点「测试连接」。
+## English (short)
 
-**Key 保存失败？** 非 Windows、或 PowerShell 不可用时会失败；也可能安全软件拦了 PowerShell。
+A third-party image-generation plugin for **DeepSeek Harness** (Windows 10/11, DSH ≥ 0.2.2-rc.3).
 
-**生成很慢/超时？** 大尺寸和复杂提示词更慢；可在设置里把超时调到 360 秒再试。
+- Sidebar panel with **Text → Image** and **Image → Image** (up to 4 reference images, click or drag-drop), plus a date-grouped **Gallery** with multi-select, batch delete and "send to references".
+- Built-in viewer: zoom 0.25×–8×, pan, prev/next, download, copy prompt, open folder.
+- Multiple OpenAI-compatible image API sources; API keys are encrypted with **Windows DPAPI** (never stored in plaintext). Prompt optimization via the same source's `/chat/completions`.
+- Conversation tool `agnes_image_generate` with text-to-image and reference-image editing.
+- UI in Chinese and English, follows DSH theme, no telemetry.
 
-**能换成别的生图 API 吗？** 只要兼容 `POST {baseUrl}/images/generations`（返回 `data[0].b64_json` 或 `data[0].url`）与 `GET {baseUrl}/models` 就能用；提示词优化需要兼容 OpenAI 的 `/chat/completions`。
+Install: `plugin_manager install_bundle` with this repository URL → reload the plugin → refresh the page → add an API source in **Settings → 生图**.
 
 ## 许可证与免责
 
-- MIT，见 [LICENSE](LICENSE)。
-- 这是第三方插件，与 DeepSeek、Agnes 官方无关；上游 API 的可用性、计费与内容政策由对应服务商决定。
-- 生成内容的合规与版权责任由使用者承担。
+- [MIT](LICENSE) © 2026 TianXie2026
+- 第三方插件，与 DeepSeek、Agnes 官方无关；上游 API 的可用性、计费与内容政策由对应服务商决定，生成内容的合规与版权责任由使用者承担。
