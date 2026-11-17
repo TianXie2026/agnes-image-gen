@@ -43,7 +43,6 @@ window.__ModuleLoader__.load({
       baseUrlPlaceholder: 'https://api.agnes-ai.cn/v1',
       keyLabel: 'API Key',
       keyPlaceholder: '粘贴密钥（加密保存）',
-      save: '保存',
       saveKey: '保存 Key',
       clearKey: '清除 Key',
       keySaved: '已加密保存',
@@ -63,18 +62,12 @@ window.__ModuleLoader__.load({
       cancel: '取消',
       clear: '清空',
       running: '生成中…',
-      cancelling: '正在取消…',
-      elapsed: '已完成 · {s} 秒',
       failed: '生成失败',
       openFolder: '打开文件夹',
       download: '下载',
-      copyPath: '复制路径',
       copied: '已复制',
       regenerate: '再来一张',
-      recent: '最近生成',
-      noHistory: '输出目录里还没有图片。',
       emptyResult: '生成结果会显示在这里。',
-      testConnection: '测试连接',
       testing: '测试中…',
       testOk: '连接正常，{n} 个模型可用。',
       defaults: '默认参数',
@@ -93,14 +86,12 @@ window.__ModuleLoader__.load({
       settingsTitle: '生图',
       settingsHint: '这些设置只影响生图插件。密钥用 Windows DPAPI（当前用户）加密后存进 DSH 凭据库。',
       dpapiNote: '密钥不会以明文写入插件配置或凭据文件。',
-      promptHistory: '历史提示词',
       retry: '重试',
       close: '关闭',
       preview: '预览',
       loadFailed: '图片加载失败',
       generating: '生成中',
       saveFailed: '保存失败',
-      configSaved: '配置已保存',
       needBaseUrl: '请先填写 API Base URL。',
       cancelled: '已取消',
       notSaved: '未落盘（save=false）',
@@ -127,8 +118,6 @@ window.__ModuleLoader__.load({
       undoOptimize: '撤销',
       optimizeHint: '用同一来源的对话模型扩写提示词，是否采用由你决定。',
       optimizeModel: '提示词优化模型',
-      removeHistory: '删除这条',
-      clearHistory: '清空历史',
       deleteImage: '删除图片',
       confirmDelete: '再点一次删除',
       deleted: '已删除',
@@ -144,7 +133,6 @@ window.__ModuleLoader__.load({
       pickFailed: '打开目录选择框失败',
       tabCreate: '画图',
       tabGallery: '图库',
-      openGallery: '打开图库',
       galleryTitle: '历史图片',
       galleryHint: '按日期分组；勾选后可以批量删除。',
       groupToday: '今天',
@@ -159,8 +147,6 @@ window.__ModuleLoader__.load({
       batchFailed: '{n} 张删除失败',
       refresh: '刷新',
       noGallery: '还没有历史图片。',
-      goCreate: '去画一张',
-      copyImage: '复制图片',
       copyPrompt: '复制提示词',
       copyFailed: '复制失败',
       promptMissing: '这张图片没有留下提示词（旧版本生成的图片）。',
@@ -176,8 +162,6 @@ window.__ModuleLoader__.load({
       zoomReset: '原始大小',
       referenceTitle: '参考图',
       referenceHint: '图生图会把这些图一起发给模型（最多 {n} 张）。',
-      clearReferences: '清空参考图',
-      maxReferences: '最多 {n} 张参考图',
       modeText: '文生图',
       modeImage: '图生图',
       refsNeeded: '请先添加至少一张参考图。',
@@ -193,6 +177,17 @@ window.__ModuleLoader__.load({
       sendToReferences: '发送到参考图',
       sentToReferences: '已加入 {n} 张参考图',
       sentSkipped: '{n} 张超出上限被跳过（最多 {max}）',
+      addToReference: '添加到参考图',
+      prevImage: '上一张',
+      nextImage: '下一张',
+      imagePosition: '{n} / {total}',
+      sendModeTitle: '添加到参考图',
+      sendModeHint: '画图页已有参考图或提示词，选择处理方式：',
+      sendAppend: '追加到参考图',
+      sendReplace: '新建参考图（清空原有）',
+      openFolder: '打开文件夹',
+      folderOpened: '已在资源管理器中定位该图片',
+      openFolderFailed: '打开文件夹失败',
     }
     const EN = {
       nav: 'Image',
@@ -206,7 +201,6 @@ window.__ModuleLoader__.load({
       baseUrlPlaceholder: 'https://api.agnes-ai.cn/v1',
       keyLabel: 'API key',
       keyPlaceholder: 'Paste the key (encrypted at rest)',
-      save: 'Save',
       saveKey: 'Save key',
       clearKey: 'Clear key',
       keySaved: 'Saved (encrypted)',
@@ -226,18 +220,12 @@ window.__ModuleLoader__.load({
       cancel: 'Cancel',
       clear: 'Clear',
       running: 'Generating…',
-      cancelling: 'Cancelling…',
-      elapsed: 'Done · {s}s',
       failed: 'Generation failed',
       openFolder: 'Open folder',
       download: 'Download',
-      copyPath: 'Copy path',
       copied: 'Copied',
       regenerate: 'One more',
-      recent: 'Recent',
-      noHistory: 'No images in the output folder yet.',
       emptyResult: 'Results appear here.',
-      testConnection: 'Test connection',
       testing: 'Testing…',
       testOk: 'Connected, {n} models available.',
       defaults: 'Defaults',
@@ -256,14 +244,12 @@ window.__ModuleLoader__.load({
       settingsTitle: 'Image generation',
       settingsHint: 'These settings only affect the image plugin. The key is encrypted with Windows DPAPI (current user) before it is stored.',
       dpapiNote: 'The key is never written to plugin config or credential files in plain text.',
-      promptHistory: 'Prompt history',
       retry: 'Retry',
       close: 'Close',
       preview: 'Preview',
       loadFailed: 'Could not load image',
       generating: 'Generating',
       saveFailed: 'Save failed',
-      configSaved: 'Settings saved',
       needBaseUrl: 'Enter the API base URL first.',
       cancelled: 'Cancelled',
       notSaved: 'Not saved (save=false)',
@@ -290,8 +276,6 @@ window.__ModuleLoader__.load({
       undoOptimize: 'Undo',
       optimizeHint: 'Rewrites the prompt with a chat model from the same source. You decide whether to use it.',
       optimizeModel: 'Prompt optimizer model',
-      removeHistory: 'Remove',
-      clearHistory: 'Clear history',
       deleteImage: 'Delete image',
       confirmDelete: 'Click again to delete',
       deleted: 'Deleted',
@@ -307,7 +291,6 @@ window.__ModuleLoader__.load({
       pickFailed: 'Could not open the folder picker',
       tabCreate: 'Create',
       tabGallery: 'Gallery',
-      openGallery: 'Open gallery',
       galleryTitle: 'History',
       galleryHint: 'Grouped by date; tick images to delete them in bulk.',
       groupToday: 'Today',
@@ -322,8 +305,6 @@ window.__ModuleLoader__.load({
       batchFailed: '{n} failed to delete',
       refresh: 'Refresh',
       noGallery: 'No images yet.',
-      goCreate: 'Create one',
-      copyImage: 'Copy image',
       copyPrompt: 'Copy prompt',
       copyFailed: 'Copy failed',
       promptMissing: 'No prompt was recorded for this image (generated by an older version).',
@@ -339,8 +320,6 @@ window.__ModuleLoader__.load({
       zoomReset: 'Actual size',
       referenceTitle: 'References',
       referenceHint: 'Image-to-image sends these along with the prompt (up to {n}).',
-      clearReferences: 'Clear references',
-      maxReferences: 'Up to {n} references',
       modeText: 'Text to image',
       modeImage: 'Image to image',
       refsNeeded: 'Add at least one reference image first.',
@@ -356,6 +335,17 @@ window.__ModuleLoader__.load({
       sendToReferences: 'Send to references',
       sentToReferences: 'Added {n} to references',
       sentSkipped: '{n} skipped (limit {max})',
+      addToReference: 'Add to references',
+      prevImage: 'Previous',
+      nextImage: 'Next',
+      imagePosition: '{n} / {total}',
+      sendModeTitle: 'Add to references',
+      sendModeHint: 'The drawing page already has references or a prompt. Choose how to proceed:',
+      sendAppend: 'Append to references',
+      sendReplace: 'Start a new reference set (clear current)',
+      openFolder: 'Open folder',
+      folderOpened: 'Revealed the image in File Explorer',
+      openFolderFailed: 'Could not open the folder',
     }
 
     // ------------------------------------------------------------- 样式
@@ -426,80 +416,6 @@ window.__ModuleLoader__.load({
       },
       row: { display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' },
       field: { display: 'flex', flexDirection: 'column', gap: 4, minWidth: 120, flex: '1 1 120px' },
-      primary: {
-        padding: '8px 16px',
-        borderRadius: 8,
-        border: '1px solid var(--dsw-alias-brand-primary)',
-        background: 'var(--dsw-alias-brand-primary)',
-        color: 'var(--dsw-alias-bg-base)',
-        font: 'inherit',
-        cursor: 'pointer',
-      },
-      secondary: {
-        padding: '6px 12px',
-        borderRadius: 8,
-        border: '1px solid var(--dsw-alias-border-l2)',
-        background: 'transparent',
-        color: 'var(--dsw-alias-label-primary)',
-        font: 'inherit',
-        cursor: 'pointer',
-      },
-      small: {
-        padding: '4px 8px',
-        borderRadius: 6,
-        border: '1px solid var(--dsw-alias-border-l2)',
-        background: 'transparent',
-        color: 'var(--dsw-alias-label-secondary)',
-        font: 'inherit',
-        fontSize: 12,
-        cursor: 'pointer',
-      },
-      action: {
-        minHeight: 32,
-        padding: '6px 12px',
-        borderRadius: 8,
-        border: '1px solid var(--dsw-alias-border-l2)',
-        background: 'var(--dsw-alias-bg-layer-2)',
-        color: 'var(--dsw-alias-label-primary)',
-        font: 'inherit',
-        fontSize: 13,
-        fontWeight: 500,
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 6,
-      },
-      actionPrimary: {
-        minHeight: 32,
-        padding: '6px 14px',
-        borderRadius: 8,
-        border: '1px solid var(--dsw-alias-brand-primary)',
-        background: 'var(--dsw-alias-brand-primary)',
-        color: 'var(--dsw-alias-bg-base)',
-        font: 'inherit',
-        fontSize: 13,
-        fontWeight: 600,
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 6,
-      },
-      actionDanger: {
-        minHeight: 32,
-        padding: '6px 14px',
-        borderRadius: 8,
-        border: '1px solid var(--dsw-alias-state-error-primary)',
-        background: 'transparent',
-        color: 'var(--dsw-alias-state-error-primary)',
-        font: 'inherit',
-        fontSize: 13,
-        fontWeight: 500,
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 6,
-      },
-      actionDisabled: { opacity: 0.5, cursor: 'not-allowed' },
       modeTabs: {
         display: 'flex',
         gap: 4,
@@ -507,30 +423,6 @@ window.__ModuleLoader__.load({
         borderRadius: 10,
         background: 'var(--dsw-alias-bg-layer-2)',
         border: '1px solid var(--dsw-alias-border-l1)',
-      },
-      modeTab: {
-        flex: 1,
-        padding: '7px 10px',
-        borderRadius: 7,
-        border: '1px solid transparent',
-        background: 'transparent',
-        color: 'var(--dsw-alias-label-secondary)',
-        font: 'inherit',
-        fontSize: 13,
-        fontWeight: 500,
-        cursor: 'pointer',
-      },
-      modeTabActive: {
-        flex: 1,
-        padding: '7px 10px',
-        borderRadius: 7,
-        border: '1px solid var(--dsw-alias-border-l2)',
-        background: 'var(--dsw-alias-bg-base)',
-        color: 'var(--dsw-alias-label-primary)',
-        font: 'inherit',
-        fontSize: 13,
-        fontWeight: 600,
-        cursor: 'pointer',
       },
       dropzone: {
         display: 'flex',
@@ -584,43 +476,11 @@ window.__ModuleLoader__.load({
         fontSize: 12,
         lineHeight: 1.5,
       },
-      disabled: { opacity: 0.5, cursor: 'not-allowed' },
       error: { color: 'var(--dsw-alias-state-error-primary)', fontSize: 12, whiteSpace: 'pre-wrap' },
       warn: { color: 'var(--dsw-alias-state-warn-primary)', fontSize: 12 },
       ok: { color: 'var(--dsw-alias-state-success-primary)', fontSize: 12 },
       muted: { color: 'var(--dsw-alias-label-secondary)', fontSize: 12 },
-      preview: {
-        width: '100%',
-        maxWidth: 560,
-        borderRadius: 10,
-        border: '1px solid var(--dsw-alias-border-l1)',
-        display: 'block',
-        background: 'var(--dsw-alias-bg-layer-2)',
-      },
-      thumbs: { display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 },
-      thumb: {
-        width: 88,
-        height: 88,
-        flex: '0 0 auto',
-        objectFit: 'cover',
-        borderRadius: 8,
-        border: '1px solid var(--dsw-alias-border-l1)',
-        cursor: 'pointer',
-        background: 'var(--dsw-alias-bg-layer-2)',
-      },
-      overlay: {
-        position: 'fixed',
-        inset: 0,
-        background: 'var(--dsw-alias-bg-overlay)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        gap: 12,
-        zIndex: 2000,
-        padding: 24,
-      },
-      overlayImage: { maxWidth: '92vw', maxHeight: '84vh', borderRadius: 8, border: '1px solid var(--dsw-alias-border-l1)' },
+      sectionLabel: { fontSize: 12, color: 'var(--dsw-alias-label-secondary)' },
       viewer: {
         position: 'fixed',
         inset: 0,
@@ -630,14 +490,15 @@ window.__ModuleLoader__.load({
         justifyContent: 'center',
         gap: 16,
         zIndex: 2000,
-        padding: 24,
-        flexWrap: 'wrap',
+        padding: 16,
+        flexWrap: 'nowrap',
+        overflow: 'hidden',
       },
       viewerStage: {
         position: 'relative',
-        flex: '1 1 420px',
-        minWidth: 260,
-        minHeight: 220,
+        flex: '1 1 0',
+        minWidth: 0,
+        minHeight: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -651,14 +512,16 @@ window.__ModuleLoader__.load({
         maxWidth: '100%',
         maxHeight: '100%',
         userSelect: 'none',
-        cursor: 'grab',
         borderRadius: 6,
         border: '1px solid var(--dsw-alias-border-l1)',
+        transformOrigin: 'center',
+        willChange: 'transform',
       },
       viewerToolbar: {
         position: 'absolute',
         left: 12,
         bottom: 12,
+        zIndex: 2,
         display: 'flex',
         gap: 6,
         alignItems: 'center',
@@ -669,8 +532,9 @@ window.__ModuleLoader__.load({
         fontSize: 12,
       },
       viewerSide: {
-        flex: '0 1 340px',
+        flex: '0 1 320px',
         minWidth: 240,
+        maxHeight: '100%',
         display: 'flex',
         flexDirection: 'column',
         gap: 10,
@@ -727,40 +591,6 @@ window.__ModuleLoader__.load({
       },
       shelfRow: { display: 'flex', gap: 8, alignItems: 'center' },
       meta: { fontSize: 12, color: 'var(--dsw-alias-label-secondary)', wordBreak: 'break-all' },
-      chips: { display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' },
-      chipItem: {
-        display: 'inline-flex',
-        alignItems: 'stretch',
-        borderRadius: 999,
-        border: '1px solid var(--dsw-alias-border-l2)',
-        overflow: 'hidden',
-        maxWidth: 260,
-      },
-      chipPick: {
-        padding: '3px 8px',
-        border: 'none',
-        background: 'transparent',
-        color: 'var(--dsw-alias-label-secondary)',
-        font: 'inherit',
-        fontSize: 12,
-        cursor: 'pointer',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-      },
-      chipRemove: {
-        padding: '3px 8px',
-        border: 'none',
-        borderLeft: '1px solid var(--dsw-alias-border-l1)',
-        background: 'transparent',
-        color: 'var(--dsw-alias-label-secondary)',
-        cursor: 'pointer',
-        font: 'inherit',
-        fontSize: 12,
-        minWidth: 24,
-        minHeight: 24,
-      },
-      thumbWrap: { position: 'relative', flex: '0 0 auto', display: 'inline-flex' },
       thumbDelete: {
         position: 'absolute',
         top: 2,
@@ -776,15 +606,6 @@ window.__ModuleLoader__.load({
         fontSize: 12,
         cursor: 'pointer',
       },
-      danger: {
-        padding: '6px 12px',
-        borderRadius: 8,
-        border: '1px solid var(--dsw-alias-state-error-primary)',
-        background: 'transparent',
-        color: 'var(--dsw-alias-state-error-primary)',
-        font: 'inherit',
-        cursor: 'pointer',
-      },
       sourceRow: {
         display: 'flex',
         flexDirection: 'column',
@@ -795,24 +616,6 @@ window.__ModuleLoader__.load({
         background: 'var(--dsw-alias-bg-layer-2)',
       },
       pageTabs: { display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' },
-      tab: {
-        padding: '6px 14px',
-        borderRadius: 999,
-        border: '1px solid var(--dsw-alias-border-l2)',
-        background: 'transparent',
-        color: 'var(--dsw-alias-label-secondary)',
-        font: 'inherit',
-        cursor: 'pointer',
-      },
-      tabActive: {
-        padding: '6px 14px',
-        borderRadius: 999,
-        border: '1px solid var(--dsw-alias-brand-primary)',
-        background: 'var(--dsw-alias-brand-primary)',
-        color: 'var(--dsw-alias-bg-base)',
-        font: 'inherit',
-        cursor: 'pointer',
-      },
       canvas: { display: 'flex', gap: 16, alignItems: 'flex-start', flexWrap: 'wrap' },
       canvasLeft: { flex: '0 1 360px', minWidth: 300, display: 'flex', flexDirection: 'column', gap: 12 },
       canvasRight: { flex: '1 1 420px', minWidth: 280, display: 'flex', flexDirection: 'column', gap: 12 },
@@ -842,6 +645,54 @@ window.__ModuleLoader__.load({
       tileImg: { width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block', cursor: 'zoom-in' },
       tileCheck: { position: 'absolute', top: 6, left: 6, width: 18, height: 18, cursor: 'pointer' },
       hidden: { display: 'none' },
+    }
+
+    // ------------------------------------------------------------- 统一按钮
+    // 内联样式没法写 :hover / :focus-visible，所以注入一份命名空间化的样式表；
+    // 选中器全部带 .agnes- 前缀，卸载时整张表移除，不影响宿主 UI。
+    const STYLE_ID = 'agnes-image-gen-ui'
+    const BUTTON_CSS = `
+.agnes-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:0 14px;border-radius:9px;border:1px solid var(--dsw-alias-border-l2);background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-primary);font:inherit;font-size:13px;font-weight:600;line-height:1;white-space:nowrap;text-decoration:none;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,color .15s ease,filter .15s ease,opacity .15s ease}
+.agnes-btn:hover{border-color:var(--dsw-alias-brand-primary);background:var(--dsw-alias-bg-layer-1)}
+.agnes-btn:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:2px}
+.agnes-btn:active{opacity:.9}
+.agnes-btn:disabled,.agnes-btn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
+.agnes-btn:disabled:hover{border-color:var(--dsw-alias-border-l2);background:var(--dsw-alias-bg-layer-2)}
+.agnes-btn--primary{border-color:var(--dsw-alias-brand-primary);background:var(--dsw-alias-brand-primary);color:var(--dsw-alias-bg-base)}
+.agnes-btn--primary:hover{border-color:var(--dsw-alias-brand-primary);background:var(--dsw-alias-brand-primary);filter:brightness(1.06)}
+.agnes-btn--ghost{border-color:var(--dsw-alias-border-l1);background:transparent;color:var(--dsw-alias-label-secondary)}
+.agnes-btn--danger{border-color:var(--dsw-alias-state-error-primary);background:transparent;color:var(--dsw-alias-state-error-primary)}
+.agnes-btn--danger:hover{border-color:var(--dsw-alias-state-error-primary);background:var(--dsw-alias-bg-layer-1)}
+.agnes-btn--danger-solid{border-color:var(--dsw-alias-state-error-primary);background:var(--dsw-alias-state-error-primary);color:var(--dsw-alias-bg-base)}
+.agnes-btn--sm{min-height:26px;padding:0 10px;font-size:12px;border-radius:8px;font-weight:500}
+.agnes-btn--icon{min-height:26px;min-width:26px;padding:0 6px;font-size:12px;font-weight:500}
+.agnes-btn--block{width:100%;justify-content:flex-start}
+`
+    const VARIANTS = new Set(['primary', 'ghost', 'danger', 'danger-solid'])
+
+    function Button({ variant = 'default', size = 'md', block = false, href, download, disabled = false, onClick, title, ariaLabel, ariaSelected, role, buttonRef, style, children }) {
+      const className = [
+        'agnes-btn',
+        VARIANTS.has(variant) ? `agnes-btn--${variant}` : '',
+        size === 'sm' ? 'agnes-btn--sm' : '',
+        size === 'icon' ? 'agnes-btn--icon' : '',
+        block ? 'agnes-btn--block' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')
+      const shared = {
+        ref: buttonRef,
+        className,
+        title,
+        role,
+        'aria-label': ariaLabel,
+        'aria-selected': ariaSelected === undefined ? undefined : ariaSelected ? 'true' : 'false',
+        style,
+      }
+      if (href) {
+        return h('a', { ...shared, href, download, 'aria-disabled': disabled ? 'true' : undefined }, children)
+      }
+      return h('button', { ...shared, type: 'button', disabled, onClick: disabled ? undefined : onClick }, children)
     }
 
     // ------------------------------------------------------------- 小工具
@@ -932,21 +783,6 @@ window.__ModuleLoader__.load({
       }
     }
 
-    /** 把同源图片按位图写进剪贴板（对话输入框里 Ctrl+V 可直接粘成图片）。 */
-    async function copyImage(src) {
-      try {
-        if (typeof ClipboardItem === 'undefined' || !navigator.clipboard?.write) return false
-        const response = await fetch(src, { credentials: 'same-origin' })
-        if (!response.ok) return false
-        const blob = await response.blob()
-        const type = blob.type && blob.type.startsWith('image/') ? blob.type : 'image/png'
-        await navigator.clipboard.write([new ClipboardItem({ [type]: blob })])
-        return true
-      } catch {
-        return false
-      }
-    }
-
     // ------------------------------------------------------------- 图标
     function Icon({ size = 18 }) {
       return h(
@@ -992,15 +828,24 @@ window.__ModuleLoader__.load({
     }
 
     // ------------------------------------------------------------- 图片查看器（缩放 / 平移 / 另存 / 复制 / 元信息）
-    function Lightbox({ src, name, path, meta, bytes, mtime, onClose, t, onUseReference, canUseReference = false }) {
+    function Lightbox({ src, name, path, meta, bytes, onClose, t, onUseReference, canUseReference = false, onPrev, onNext, position = '' }) {
       const [scale, setScale] = useState(1)
       const [offset, setOffset] = useState({ x: 0, y: 0 })
+      const [dragging, setDragging] = useState(false)
       const [notice, setNotice] = useState('')
+      const stageRef = useRef(null)
+      const imgRef = useRef(null)
       const dragRef = useRef(null)
       const closeRef = useRef(null)
 
       const clampScale = (value) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, value))
-      const zoomBy = useCallback((factor) => setScale((current) => clampScale(current * factor)), [])
+      const zoomBy = useCallback((factor) => {
+        setScale((current) => {
+          const next = clampScale(current * factor)
+          if (next <= 1) setOffset({ x: 0, y: 0 })
+          return next
+        })
+      }, [])
       const reset = useCallback(() => {
         setScale(1)
         setOffset({ x: 0, y: 0 })
@@ -1009,6 +854,36 @@ window.__ModuleLoader__.load({
       useEffect(() => {
         reset()
       }, [reset, src])
+
+      // 限制平移范围：图比舞台大时可以露出边缘，图比舞台小时只能在本区域内挪动。
+      const clampOffset = useCallback((next, scaleValue) => {
+        const stage = stageRef.current
+        const image = imgRef.current
+        if (!stage || !image) return next
+        const stageBox = stage.getBoundingClientRect()
+        const imageBox = image.getBoundingClientRect()
+        const baseWidth = imageBox.width / (scaleValue || 1)
+        const baseHeight = imageBox.height / (scaleValue || 1)
+        const scaledWidth = baseWidth * scaleValue
+        const scaledHeight = baseHeight * scaleValue
+        const maxX = Math.max(0, Math.abs(scaledWidth - stageBox.width) / 2)
+        const maxY = Math.max(0, Math.abs(scaledHeight - stageBox.height) / 2)
+        return {
+          x: Math.min(maxX, Math.max(-maxX, next.x)),
+          y: Math.min(maxY, Math.max(-maxY, next.y)),
+        }
+      }, [])
+
+      useEffect(() => {
+        const element = stageRef.current
+        if (!element) return undefined
+        const onWheel = (event) => {
+          event.preventDefault()
+          zoomBy(event.deltaY < 0 ? 1.12 : 1 / 1.12)
+        }
+        element.addEventListener('wheel', onWheel, { passive: false })
+        return () => element.removeEventListener('wheel', onWheel)
+      }, [zoomBy])
 
       useEffect(() => {
         closeRef.current?.focus()
@@ -1031,51 +906,71 @@ window.__ModuleLoader__.load({
           if (event.key === '0') {
             event.preventDefault()
             reset()
+            return
+          }
+          if (event.key === 'ArrowLeft' && onPrev) {
+            event.preventDefault()
+            onPrev()
+            return
+          }
+          if (event.key === 'ArrowRight' && onNext) {
+            event.preventDefault()
+            onNext()
           }
         }
         window.addEventListener('keydown', onKey)
         return () => window.removeEventListener('keydown', onKey)
-      }, [onClose, reset, zoomBy])
+      }, [onClose, onNext, onPrev, reset, zoomBy])
 
       const flash = useCallback((message) => {
         setNotice(message)
         window.setTimeout(() => setNotice((current) => (current === message ? '' : current)), 3200)
       }, [])
 
-      const doCopyImage = useCallback(async () => {
-        const ok = await copyImage(src)
-        if (!ok) {
-          flash(t('copyFailed'))
-          return false
-        }
-        flash(t('copied'))
-        return true
-      }, [flash, src, t])
-
       const doCopyPrompt = useCallback(async () => {
         const ok = await copyText(String(meta?.prompt ?? ''))
         flash(ok ? t('copied') : t('copyFailed'))
       }, [flash, meta, t])
 
-      const onWheel = (event) => {
-        event.preventDefault()
-        zoomBy(event.deltaY < 0 ? 1.12 : 1 / 1.12)
-      }
+      const revealFolder = useCallback(async () => {
+        if (!path) return
+        try {
+          await api('/reveal', { method: 'POST', body: { path } })
+          flash(t('folderOpened'))
+        } catch (failure) {
+          flash(`${t('openFolderFailed')}：${failure.message}`)
+        }
+      }, [flash, path, t])
 
       const onPointerDown = (event) => {
-        if (scale <= 1) return
-        dragRef.current = { x: event.clientX, y: event.clientY, ox: offset.x, oy: offset.y }
-        event.currentTarget.setPointerCapture?.(event.pointerId)
+        if (event.button !== 0) return
+        event.preventDefault()
+        dragRef.current = { id: event.pointerId, x: event.clientX, y: event.clientY, ox: offset.x, oy: offset.y }
+        setDragging(true)
+        try {
+          event.currentTarget.setPointerCapture(event.pointerId)
+        } catch {
+          // 指针捕获不可用时退化为普通拖动。
+        }
       }
 
       const onPointerMove = (event) => {
         const drag = dragRef.current
-        if (!drag) return
-        setOffset({ x: drag.ox + event.clientX - drag.x, y: drag.oy + event.clientY - drag.y })
+        if (!drag || drag.id !== event.pointerId) return
+        setOffset(clampOffset({ x: drag.ox + (event.clientX - drag.x), y: drag.oy + (event.clientY - drag.y) }, scale))
       }
 
-      const onPointerUp = () => {
+      const endDrag = (event) => {
+        const drag = dragRef.current
+        if (drag && event?.pointerId === drag.id) {
+          try {
+            event.currentTarget.releasePointerCapture(drag.id)
+          } catch {
+            // 已经释放时忽略。
+          }
+        }
         dragRef.current = null
+        setDragging(false)
       }
 
       const rows = []
@@ -1093,6 +988,24 @@ window.__ModuleLoader__.load({
       if (Number.isFinite(bytes ?? meta?.bytes)) rows.push([t('bytesLabel'), formatBytes(bytes ?? meta.bytes)])
       if (path) rows.push([t('fileName'), name || path.split(/[\\/]/).pop() || ''])
 
+      const nav = onPrev || onNext
+        ? h(
+            'div',
+            { style: { display: 'flex', alignItems: 'center', gap: 4, marginLeft: 8, paddingLeft: 8, borderLeft: '1px solid var(--dsw-alias-border-l1)' } },
+            h(
+              Button,
+              { size: 'icon', title: t('prevImage'), ariaLabel: t('prevImage'), disabled: !onPrev, onClick: onPrev },
+              '‹',
+            ),
+            h('span', { style: { minWidth: 52, textAlign: 'center', fontSize: 12 } }, position || ''),
+            h(
+              Button,
+              { size: 'icon', title: t('nextImage'), ariaLabel: t('nextImage'), disabled: !onNext, onClick: onNext },
+              '›',
+            ),
+          )
+        : null
+
       return h(
         'div',
         {
@@ -1108,41 +1021,36 @@ window.__ModuleLoader__.load({
           'div',
           {
             style: css.viewerStage,
-            onWheel,
+            ref: stageRef,
             onPointerDown,
             onPointerMove,
-            onPointerUp,
-            onPointerCancel: onPointerUp,
+            onPointerUp: endDrag,
+            onPointerCancel: endDrag,
             onDoubleClick: () => {
               if (scale === 1) setScale(2)
               else reset()
             },
           },
           h('img', {
+            ref: imgRef,
             src,
             alt: name || t('preview'),
             draggable: false,
+            onDragStart: (event) => event.preventDefault(),
             style: {
               ...css.viewerImage,
-              transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
-              cursor: scale > 1 ? 'grab' : 'zoom-in',
+              transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${scale})`,
+              cursor: dragging ? 'grabbing' : scale > 1 ? 'grab' : 'move',
             },
           }),
           h(
             'div',
             { style: css.viewerToolbar },
-            h(
-              'button',
-              { type: 'button', style: css.small, onClick: () => zoomBy(0.8), 'aria-label': t('zoomOut'), title: t('zoomOut') },
-              '−',
-            ),
-            h('span', { style: { minWidth: 44, textAlign: 'center' } }, `${Math.round(scale * 100)}%`),
-            h(
-              'button',
-              { type: 'button', style: css.small, onClick: () => zoomBy(1.25), 'aria-label': t('zoomIn'), title: t('zoomIn') },
-              '+',
-            ),
-            h('button', { type: 'button', style: css.small, onClick: reset }, t('zoomReset')),
+            h(Button, { size: 'icon', title: t('zoomOut'), ariaLabel: t('zoomOut'), onClick: () => zoomBy(0.8) }, '−'),
+            h('span', { style: { minWidth: 46, textAlign: 'center' } }, `${Math.round(scale * 100)}%`),
+            h(Button, { size: 'icon', title: t('zoomIn'), ariaLabel: t('zoomIn'), onClick: () => zoomBy(1.25) }, '+'),
+            h(Button, { size: 'sm', onClick: reset }, t('zoomReset')),
+            nav,
           ),
         ),
         h(
@@ -1152,11 +1060,7 @@ window.__ModuleLoader__.load({
             'div',
             { style: { display: 'flex', gap: 8, alignItems: 'flex-start' } },
             h('strong', { style: { fontSize: 14, wordBreak: 'break-all' } }, name || t('preview')),
-            h(
-              'button',
-              { ref: closeRef, type: 'button', style: { ...css.small, marginLeft: 'auto' }, onClick: onClose },
-              t('close'),
-            ),
+            h(Button, { buttonRef: closeRef, size: 'sm', variant: 'ghost', style: { marginLeft: 'auto' }, onClick: onClose }, t('close')),
           ),
           h('div', { style: css.sectionLabel }, t('promptLabel')),
           meta?.prompt
@@ -1167,13 +1071,19 @@ window.__ModuleLoader__.load({
             : null,
           h(
             'div',
-            { style: { ...css.shelfRow, flexWrap: 'wrap' } },
-            h('a', { href: src, download: name || 'agnes-image.png', style: { ...css.action, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' } }, t('download')),
-            h('button', { type: 'button', style: css.action, onClick: doCopyImage }, t('copyImage')),
-            meta?.prompt ? h('button', { type: 'button', style: css.action, onClick: doCopyPrompt }, t('copyPrompt')) : null,
-            canUseReference && path
-              ? h('button', { type: 'button', style: css.action, onClick: () => onUseReference?.({ path, name }) }, t('useAsReference'))
+            { style: { display: 'flex', flexDirection: 'column', gap: 8 } },
+            h(
+              Button,
+              { variant: 'primary', block: true, href: src, download: name || 'agnes-image.png' },
+              t('download'),
+            ),
+            meta?.prompt
+              ? h(Button, { block: true, onClick: doCopyPrompt }, t('copyPrompt'))
               : null,
+            canUseReference && path
+              ? h(Button, { block: true, onClick: () => onUseReference?.({ path, name }) }, t('useAsReference'))
+              : null,
+            path ? h(Button, { block: true, onClick: revealFolder }, t('openFolder')) : null,
           ),
           notice ? h('div', { style: css.ok }, notice) : null,
           rows.length
@@ -1306,29 +1216,14 @@ window.__ModuleLoader__.load({
               placeholder: state?.defaultOutputDir || '',
               onChange: (event) => setOutputDir(event.target.value),
             }),
-            pickDirectory
-              ? h(
-                  'button',
-                  { type: 'button', style: css.secondary, onClick: chooseFolder },
-                  t('chooseFolder'),
-                )
-              : null,
+            pickDirectory ? h(Button, { size: 'sm', onClick: chooseFolder }, t('chooseFolder')) : null,
           ),
           h('div', { style: css.muted }, dirHint(t, state)),
         ),
         h(
           'div',
           { style: css.shelfRow },
-          h(
-            'button',
-            {
-              type: 'button',
-              style: busy ? { ...css.primary, ...css.disabled } : css.primary,
-              disabled: busy,
-              onClick: save,
-            },
-            t('saveSource'),
-          ),
+          h(Button, { variant: 'primary', block: true, disabled: busy, onClick: save }, t('saveSource')),
         ),
         h('div', { style: css.muted }, t('dpapiNote')),
         error ? h('div', { style: css.error }, error) : null,
@@ -1378,6 +1273,7 @@ window.__ModuleLoader__.load({
         }
       })
       const [references, setReferences] = useState([])
+      const [prompt, setPrompt] = useState('')
 
       const go = useCallback((next) => {
         setPage(next)
@@ -1442,10 +1338,25 @@ window.__ModuleLoader__.load({
         [addReference, go],
       )
 
-      // 图库「发送到参考图」：批量加入后切回画图页的图生图模式。
+      // 图库「发送到参考图」：mode='replace' 时清空原有参考图与提示词，再切回画图页的图生图模式。
       const sendToReferences = useCallback(
-        (items) => {
-          const skipped = addReferences(items)
+        (items, mode) => {
+          const list = Array.isArray(items) ? items : []
+          let skipped = 0
+          if (mode === 'replace') {
+            const next = list
+              .map((item) => ({
+                path: typeof item === 'string' ? item : item?.path,
+                name: typeof item === 'string' ? '' : String(item?.name ?? ''),
+              }))
+              .filter((item) => Boolean(item.path))
+              .slice(0, MAX_REFERENCES)
+            skipped = Math.max(0, list.length - next.length)
+            setReferences(next)
+            setPrompt('')
+          } else {
+            skipped = addReferences(list)
+          }
           chooseMode('image')
           go('create')
           return skipped
@@ -1453,14 +1364,33 @@ window.__ModuleLoader__.load({
         [addReferences, chooseMode, go],
       )
 
+      // 结果图「添加到参考图」：用它替换现有参考图，并清空提示词。
+      const replaceReferences = useCallback(
+        (items) => {
+          const list = Array.isArray(items) ? items : []
+          const next = list
+            .map((item) => ({
+              path: typeof item === 'string' ? item : item?.path,
+              name: typeof item === 'string' ? '' : String(item?.name ?? ''),
+            }))
+            .filter((item) => Boolean(item.path))
+            .slice(0, MAX_REFERENCES)
+          setReferences(next)
+          setPrompt('')
+          chooseMode('image')
+          go('create')
+        },
+        [chooseMode, go],
+      )
+
       const tab = (id, label) =>
         h(
-          'button',
+          Button,
           {
-            type: 'button',
+            variant: page === id ? 'primary' : 'ghost',
+            size: 'sm',
             role: 'tab',
-            'aria-selected': page === id,
-            style: page === id ? css.tabActive : css.tab,
+            ariaSelected: page === id,
             onClick: () => go(id),
           },
           label,
@@ -1483,29 +1413,36 @@ window.__ModuleLoader__.load({
             pickDirectory,
             mode,
             onMode: chooseMode,
+            prompt,
+            onPrompt: setPrompt,
             references,
             onAddReference: addReference,
             onAddReferences: addReferences,
+            onReplaceReferences: replaceReferences,
             onRemoveReference: removeReference,
-            onSwitchToGallery: () => go('gallery'),
           }),
         ),
         galleryMounted
           ? h(
               'div',
               { role: 'tabpanel', style: page === 'gallery' ? undefined : css.hidden },
-              h(GalleryView, { t, active: page === 'gallery', onUseReference: useReference, onSendToReferences: sendToReferences }),
+              h(GalleryView, {
+                t,
+                active: page === 'gallery',
+                onUseReference: useReference,
+                onSendToReferences: sendToReferences,
+                hasCanvasContent: Boolean(references.length || prompt.trim()),
+              }),
             )
           : null,
       )
     }
 
-    function CreateView({ t, pickDirectory, mode = 'text', onMode, references = [], onAddReferences, onRemoveReference }) {
+    function CreateView({ t, pickDirectory, mode = 'text', onMode, prompt = '', onPrompt, references = [], onAddReferences, onReplaceReferences, onRemoveReference }) {
       const [state, setState] = useState(undefined)
       const [loading, setLoading] = useState(true)
       const [error, setError] = useState('')
       const [notice, setNotice] = useState('')
-      const [prompt, setPrompt] = useState('')
       const [model, setModel] = useState('')
       const [size, setSize] = useState('')
       const [ratio, setRatio] = useState('')
@@ -1596,6 +1533,9 @@ window.__ModuleLoader__.load({
       const support =
         typeof modelEntry?.img2img === 'boolean' ? (modelEntry.img2img ? 'yes' : 'no') : img2imgSupport(model)
       const refsMissing = imageMode && !references.length
+      const genDisabled = Boolean(
+        busy || running || !ready || !keyReady || uploading || (imageMode && (refsMissing || support === 'no')),
+      )
 
       const uploadFiles = useCallback(
         async (fileList) => {
@@ -1736,21 +1676,21 @@ window.__ModuleLoader__.load({
             body: { prompt: text, sourceId: sourceId || undefined },
           })
           setOptimizedFrom(text)
-          setPrompt(result.prompt ?? text)
+          onPrompt?.(result.prompt ?? text)
           setNotice(t('optimized'))
         } catch (failure) {
           setError(failure.message)
         } finally {
           setOptimizing(false)
         }
-      }, [optimizing, prompt, sourceId, t])
+      }, [onPrompt, optimizing, prompt, sourceId, t])
 
       const undoOptimize = useCallback(() => {
         if (!optimizedFrom) return
-        setPrompt(optimizedFrom)
+        onPrompt?.(optimizedFrom)
         setOptimizedFrom('')
         setNotice('')
-      }, [optimizedFrom])
+      }, [onPrompt, optimizedFrom])
 
       const deleteImage = useCallback(
         async (target) => {
@@ -1763,7 +1703,7 @@ window.__ModuleLoader__.load({
           setError('')
           try {
             await api('/delete', { method: 'POST', body: { path: target } })
-            setPreview('')
+            setPreview(null)
             setNotice(t('deleted'))
             await load()
             setJob((current) => (current?.result?.path === target ? undefined : current))
@@ -1823,23 +1763,21 @@ window.__ModuleLoader__.load({
                 'div',
                 { style: css.modeTabs, role: 'tablist', 'aria-label': t('panelTitle') },
                 h(
-                  'button',
+                  Button,
                   {
-                    type: 'button',
+                    variant: imageMode ? 'ghost' : 'primary',
                     role: 'tab',
-                    'aria-selected': !imageMode,
-                    style: imageMode ? css.modeTab : css.modeTabActive,
+                    ariaSelected: !imageMode,
                     onClick: () => onMode?.('text'),
                   },
                   t('modeText'),
                 ),
                 h(
-                  'button',
+                  Button,
                   {
-                    type: 'button',
+                    variant: imageMode ? 'primary' : 'ghost',
                     role: 'tab',
-                    'aria-selected': imageMode,
-                    style: imageMode ? css.modeTabActive : css.modeTab,
+                    ariaSelected: imageMode,
                     onClick: () => onMode?.('image'),
                   },
                   t('modeImage'),
@@ -1875,7 +1813,7 @@ window.__ModuleLoader__.load({
                   style: css.textarea,
                   value: prompt,
                   placeholder: t('promptPlaceholder'),
-                  onChange: (event) => setPrompt(event.target.value),
+                  onChange: (event) => onPrompt?.(event.target.value),
                   onKeyDown: (event) => {
                     if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
                       event.preventDefault()
@@ -1932,20 +1870,17 @@ window.__ModuleLoader__.load({
                 'div',
                 { style: css.shelfRow },
                 h(
-                  'button',
+                  Button,
                   {
-                    type: 'button',
-                    style: optimizing || !prompt.trim() || !keyReady ? { ...css.secondary, ...css.disabled } : css.secondary,
+                    size: 'sm',
                     disabled: optimizing || !prompt.trim() || !keyReady,
                     onClick: optimize,
                     title: t('optimizeHint'),
                   },
                   optimizing ? t('optimizing') : t('optimizePrompt'),
                 ),
-                optimizedFrom
-                  ? h('button', { type: 'button', style: css.small, onClick: undoOptimize }, t('undoOptimize'))
-                  : null,
-                prompt ? h('button', { type: 'button', style: css.small, onClick: () => setPrompt('') }, t('clear')) : null,
+                optimizedFrom ? h(Button, { size: 'sm', onClick: undoOptimize }, t('undoOptimize')) : null,
+                prompt ? h(Button, { size: 'sm', onClick: () => onPrompt?.('') }, t('clear')) : null,
               ),
               imageMode && references.length
                 ? h(
@@ -2019,20 +1954,8 @@ window.__ModuleLoader__.load({
               h(
                 'div',
                 { style: css.shelfRow },
-                h(
-                  'button',
-                  {
-                    type: 'button',
-                    style:
-                      busy || running || !ready || !keyReady || uploading || (imageMode && (refsMissing || support === 'no'))
-                        ? { ...css.actionPrimary, ...css.actionDisabled }
-                        : css.actionPrimary,
-                    disabled: busy || running || !ready || !keyReady || uploading || (imageMode && (refsMissing || support === 'no')),
-                    onClick: generate,
-                  },
-                  t('generate'),
-                ),
-                running ? h('button', { type: 'button', style: css.secondary, onClick: cancel }, t('cancel')) : null,
+                  h(Button, { variant: 'primary', block: true, disabled: genDisabled, onClick: generate }, t('generate')),
+                  running ? h(Button, { variant: 'danger', block: true, onClick: cancel }, t('cancel')) : null,
               ),
               error ? h('div', { style: css.error }, error) : null,
               notice ? h('div', { style: css.ok }, notice) : null,
@@ -2060,7 +1983,7 @@ window.__ModuleLoader__.load({
                   'div',
                   { style: css.card },
                   h('div', { style: css.error }, `${t('failed')}：${job.error?.message ?? ''}`),
-                  h('button', { type: 'button', style: css.small, onClick: generate }, t('retry')),
+                  h(Button, { size: 'sm', onClick: generate }, t('retry')),
                 )
               : null,
             job?.state === 'cancelled' ? h('div', { style: css.warn }, t('cancelled')) : null,
@@ -2091,24 +2014,26 @@ window.__ModuleLoader__.load({
                   h(
                     'div',
                     { style: css.shelfRow },
-                    h(
-                      'button',
-                      {
-                        type: 'button',
-                        style: busy || running ? { ...css.action, ...css.actionDisabled } : css.action,
-                        disabled: busy || running,
-                        onClick: generate,
-                      },
-                      t('regenerate'),
-                    ),
+                    h(Button, { variant: 'primary', disabled: busy || running, onClick: generate }, t('regenerate')),
                     savedPath
                       ? h(
-                          'button',
+                          Button,
                           {
-                            type: 'button',
-                            style: armedDelete === savedPath ? css.actionDanger : css.action,
+                            disabled: busy || running,
+                            onClick: () =>
+                              onReplaceReferences?.([{ path: savedPath, name: result?.name ?? '' }]),
+                            title: t('addToReference'),
+                          },
+                          t('addToReference'),
+                        )
+                      : null,
+                    savedPath
+                      ? h(
+                          Button,
+                          {
+                            variant: 'danger',
                             onClick: () => deleteImage(savedPath),
-                            'aria-label': t('deleteImage'),
+                            ariaLabel: t('deleteImage'),
                           },
                           armedDelete === savedPath ? t('confirmDelete') : t('deleteImage'),
                         )
@@ -2134,7 +2059,7 @@ window.__ModuleLoader__.load({
     }
 
     // ------------------------------------------------------------- 图库页
-    function GalleryView({ t, active, onUseReference, onSendToReferences }) {
+    function GalleryView({ t, active, onUseReference, onSendToReferences, hasCanvasContent = false }) {
       const [files, setFiles] = useState([])
       const [loading, setLoading] = useState(true)
       const [error, setError] = useState('')
@@ -2145,6 +2070,26 @@ window.__ModuleLoader__.load({
       const armedPaths = useRef('')
       const [preview, setPreview] = useState(null)
       const [busy, setBusy] = useState(false)
+      const [sendOpen, setSendOpen] = useState(false)
+
+      const previewIndex = useMemo(() => {
+        if (!preview?.path) return -1
+        return files.findIndex((file) => file.path === preview.path)
+      }, [files, preview])
+
+      const openAt = useCallback(
+        (position) => {
+          const file = files[position]
+          if (!file) return
+          setPreview({
+            src: routeUrl(`/image?path=${encodeURIComponent(file.path)}`),
+            name: file.name,
+            path: file.path,
+            meta: file.meta,
+          })
+        },
+        [files],
+      )
 
       const load = useCallback(async () => {
         setLoading(true)
@@ -2170,6 +2115,15 @@ window.__ModuleLoader__.load({
         const timer = window.setTimeout(() => setArmed(''), 3000)
         return () => window.clearTimeout(timer)
       }, [armed])
+
+      useEffect(() => {
+        if (!sendOpen) return undefined
+        const onKey = (event) => {
+          if (event.key === 'Escape') setSendOpen(false)
+        }
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+      }, [sendOpen])
 
       const dayKeyOf = (value) => {
         const date = new Date(value)
@@ -2228,21 +2182,34 @@ window.__ModuleLoader__.load({
         setArmed('')
       }, [])
 
-      const sendToReferences = useCallback(() => {
+      const applySend = useCallback(
+        (mode) => {
+          if (!selected.size || busy) return
+          const items = files.filter((file) => selected.has(file.path))
+          const skipped = onSendToReferences?.(items, mode) ?? 0
+          const added = items.length - skipped
+          setSendOpen(false)
+          setArmed('')
+          setSelected(new Set())
+          setError('')
+          if (added > 0) {
+            const extra = skipped ? ` · ${t('sentSkipped').replace('{n}', String(skipped)).replace('{max}', String(MAX_REFERENCES))}` : ''
+            setNotice(`${t('sentToReferences').replace('{n}', String(added))}${extra}`)
+          } else {
+            setError(t('refsFull').replace('{n}', String(MAX_REFERENCES)))
+          }
+        },
+        [busy, files, onSendToReferences, selected, t],
+      )
+
+      const requestSend = useCallback(() => {
         if (!selected.size || busy) return
-        const items = files.filter((file) => selected.has(file.path))
-        const skipped = onSendToReferences?.(items) ?? 0
-        const added = items.length - skipped
-        setArmed('')
-        setSelected(new Set())
-        setError('')
-        if (added > 0) {
-          const extra = skipped ? ` · ${t('sentSkipped').replace('{n}', String(skipped)).replace('{max}', String(MAX_REFERENCES))}` : ''
-          setNotice(`${t('sentToReferences').replace('{n}', String(added))}${extra}`)
-        } else {
-          setError(t('refsFull').replace('{n}', String(MAX_REFERENCES)))
+        if (hasCanvasContent) {
+          setSendOpen(true)
+          return
         }
-      }, [busy, files, onSendToReferences, selected, t])
+        applySend('append')
+      }, [applySend, busy, hasCanvasContent, selected])
 
       const deleteSelected = useCallback(async () => {
         const paths = [...selected]
@@ -2269,7 +2236,7 @@ window.__ModuleLoader__.load({
           const removed = (result.deleted ?? []).length
           if (removed) setNotice(t('batchDeleted', { n: removed }))
           if (failed.length) setError(`${t('batchFailed', { n: failed.length })}：${failed.map((item) => item.message).join('；')}`)
-          setPreview('')
+          setPreview((current) => (current?.path && paths.includes(current.path) ? null : current))
           await load()
         } catch (failure) {
           setError(`${t('deleteFailed')}：${failure.message}`)
@@ -2295,7 +2262,7 @@ window.__ModuleLoader__.load({
               next.delete(target)
               return next
             })
-            setPreview('')
+            setPreview((current) => (current?.path === target ? null : current))
             setNotice(t('deleted'))
           } catch (failure) {
             setError(`${t('deleteFailed')}：${failure.message}`)
@@ -2311,7 +2278,7 @@ window.__ModuleLoader__.load({
           'div',
           { style: css.header },
           h('div', null, h('h1', { style: css.h1 }, t('galleryTitle')), h('p', { style: css.sub }, t('galleryHint'))),
-          h('button', { type: 'button', style: css.small, onClick: load, disabled: loading }, t('refresh')),
+          h(Button, { variant: 'ghost', size: 'sm', onClick: load, disabled: loading }, t('refresh')),
         ),
         h(
           'div',
@@ -2319,10 +2286,10 @@ window.__ModuleLoader__.load({
           h('span', { style: css.muted }, t('groupCount', { n: files.length })),
           selected.size ? h('span', { style: css.ok }, t('selectedCount', { n: selected.size })) : null,
           h(
-            'button',
+            Button,
             {
-              type: 'button',
-              style: files.length ? css.small : { ...css.small, ...css.disabled },
+              variant: 'ghost',
+              size: 'sm',
               disabled: !files.length,
               onClick: () => {
                 setArmed('')
@@ -2333,10 +2300,10 @@ window.__ModuleLoader__.load({
           ),
           selected.size
             ? h(
-                'button',
+                Button,
                 {
-                  type: 'button',
-                  style: css.small,
+                  variant: 'ghost',
+                  size: 'sm',
                   onClick: () => {
                     setArmed('')
                     setSelected(new Set())
@@ -2345,21 +2312,11 @@ window.__ModuleLoader__.load({
                 t('clearSelection'),
               )
             : null,
+          h(Button, { disabled: !selected.size || busy, onClick: requestSend }, t('sendToReferences')),
           h(
-            'button',
+            Button,
             {
-              type: 'button',
-              style: selected.size && !busy ? css.action : { ...css.action, ...css.actionDisabled },
-              disabled: !selected.size || busy,
-              onClick: sendToReferences,
-            },
-            t('sendToReferences'),
-          ),
-          h(
-            'button',
-            {
-              type: 'button',
-              style: armed === 'batch' ? css.danger : selected.size && !busy ? css.danger : { ...css.danger, ...css.disabled },
+              variant: 'danger',
               disabled: !selected.size || busy,
               onClick: deleteSelected,
             },
@@ -2377,7 +2334,7 @@ window.__ModuleLoader__.load({
             h(
               'div',
               { style: css.groupHead },
-              h('button', { type: 'button', style: css.small, onClick: () => toggleGroup(group.items) }, t('selectAll')),
+              h(Button, { variant: 'ghost', size: 'sm', onClick: () => toggleGroup(group.items) }, t('selectAll')),
               h('strong', { style: { fontSize: 13 } }, dayLabel(group.at)),
               h('span', { style: css.groupCount }, t('groupCount', { n: group.items.length })),
             ),
@@ -2440,6 +2397,48 @@ window.__ModuleLoader__.load({
             ),
           ),
         ),
+        sendOpen
+          ? h(
+              'div',
+              {
+                style: {
+                  position: 'fixed',
+                  inset: 0,
+                  zIndex: 2100,
+                  padding: 24,
+                  background: 'var(--dsw-alias-bg-overlay)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                },
+                onClick: (event) => {
+                  if (event.target === event.currentTarget) setSendOpen(false)
+                },
+              },
+              h(
+                'div',
+                {
+                  role: 'dialog',
+                  'aria-modal': 'true',
+                  'aria-label': t('sendModeTitle'),
+                  style: {
+                    ...css.card,
+                    maxWidth: 460,
+                    width: '100%',
+                    background: 'var(--dsw-alias-bg-layer-1)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 10,
+                  },
+                },
+                h('strong', null, t('sendModeTitle')),
+                h('div', { style: css.muted }, t('sendModeHint')),
+                h(Button, { variant: 'primary', block: true, onClick: () => applySend('append') }, t('sendAppend')),
+                h(Button, { block: true, onClick: () => applySend('replace') }, t('sendReplace')),
+                h(Button, { variant: 'ghost', block: true, onClick: () => setSendOpen(false) }, t('cancel')),
+              ),
+            )
+          : null,
         preview
           ? h(Lightbox, {
               src: preview.src,
@@ -2451,6 +2450,12 @@ window.__ModuleLoader__.load({
               t,
               onUseReference,
               canUseReference: Boolean(onUseReference),
+              onPrev: previewIndex > 0 ? () => openAt(previewIndex - 1) : null,
+              onNext: previewIndex >= 0 && previewIndex < files.length - 1 ? () => openAt(previewIndex + 1) : null,
+              position:
+                previewIndex >= 0
+                  ? t('imagePosition').replace('{n}', String(previewIndex + 1)).replace('{total}', String(files.length))
+                  : '',
             })
           : null,
       )
@@ -2717,15 +2722,14 @@ window.__ModuleLoader__.load({
                       { style: css.shelfRow },
                       h('span', { style: css.muted }, keyStateText(t, source.key)),
                       h(
-                        'button',
-                        { type: 'button', style: css.small, disabled: testingId === source.id, onClick: () => testFor(source.id) },
+                        Button,
+                        { size: 'sm', disabled: testingId === source.id, onClick: () => testFor(source.id) },
                         testingId === source.id ? t('testing') : t('testThis'),
                       ),
                       h(
-                        'button',
+                        Button,
                         {
-                          type: 'button',
-                          style: css.small,
+                          size: 'sm',
                           onClick: () => {
                             setKeyFor(keyFor === source.id ? '' : source.id)
                             setKeyValue('')
@@ -2734,24 +2738,16 @@ window.__ModuleLoader__.load({
                         t('saveKey'),
                       ),
                       source.key?.hasStored
-                        ? h(
-                            'button',
-                            { type: 'button', style: css.small, disabled: busy, onClick: () => clearKeyFor(source.id) },
-                            t('clearKey'),
-                          )
+                        ? h(Button, { size: 'sm', disabled: busy, onClick: () => clearKeyFor(source.id) }, t('clearKey'))
                         : null,
                       source.isDefault
                         ? null
-                        : h(
-                            'button',
-                            { type: 'button', style: css.small, disabled: busy, onClick: () => makeDefault(source.id) },
-                            t('setDefault'),
-                          ),
+                        : h(Button, { size: 'sm', disabled: busy, onClick: () => makeDefault(source.id) }, t('setDefault')),
                       h(
-                        'button',
+                        Button,
                         {
-                          type: 'button',
-                          style: armedSource === source.id ? css.danger : css.small,
+                          variant: armedSource === source.id ? 'danger-solid' : 'danger',
+                          size: 'sm',
                           disabled: busy,
                           onClick: () => removeSource(source.id),
                         },
@@ -2772,13 +2768,8 @@ window.__ModuleLoader__.load({
                             onChange: (event) => setKeyValue(event.target.value),
                           }),
                           h(
-                            'button',
-                            {
-                              type: 'button',
-                              style: busy ? { ...css.secondary, ...css.disabled } : css.secondary,
-                              disabled: busy,
-                              onClick: () => saveKeyFor(source.id),
-                            },
+                            Button,
+                            { size: 'sm', disabled: busy, onClick: () => saveKeyFor(source.id) },
                             t('saveKey'),
                           ),
                         )
@@ -2834,11 +2825,7 @@ window.__ModuleLoader__.load({
           h(
             'div',
             { style: css.shelfRow },
-            h(
-              'button',
-              { type: 'button', style: busy ? { ...css.primary, ...css.disabled } : css.primary, disabled: busy, onClick: addSource },
-              t('addSource'),
-            ),
+            h(Button, { variant: 'primary', disabled: busy, onClick: addSource }, t('addSource')),
           ),
           h('div', { style: css.muted }, t('dpapiNote')),
         ),
@@ -2940,10 +2927,9 @@ window.__ModuleLoader__.load({
               }),
               pickDirectory
                 ? h(
-                    'button',
+                    Button,
                     {
-                      type: 'button',
-                      style: css.secondary,
+                      size: 'sm',
                       onClick: async () => {
                         try {
                           const picked = await pickDirectory()
@@ -2957,10 +2943,9 @@ window.__ModuleLoader__.load({
                   )
                 : null,
               h(
-                'button',
+                Button,
                 {
-                  type: 'button',
-                  style: css.secondary,
+                  size: 'sm',
                   onClick: () => api('/reveal', { method: 'POST', body: {} }).catch((failure) => setError(failure.message)),
                 },
                 t('openFolder'),
@@ -2975,11 +2960,7 @@ window.__ModuleLoader__.load({
           h(
             'div',
             { style: css.shelfRow },
-            h(
-              'button',
-              { type: 'button', style: busy ? { ...css.primary, ...css.disabled } : css.primary, disabled: busy, onClick: saveSettings },
-              t('saveSettings'),
-            ),
+            h(Button, { variant: 'primary', disabled: busy, onClick: saveSettings }, t('saveSettings')),
           ),
         ),
 
@@ -3063,7 +3044,7 @@ window.__ModuleLoader__.load({
           'div',
           { style: { display: 'flex', gap: 8, alignItems: 'center', fontSize: 12, color: 'var(--dsw-alias-state-error-primary)' } },
           h('span', null, t('loadFailed')),
-          h('button', { type: 'button', onClick: retry, style: css.small }, t('retry')),
+          h(Button, { size: 'sm', onClick: retry }, t('retry')),
         )
       }
       if (!src) {
@@ -3101,7 +3082,7 @@ window.__ModuleLoader__.load({
             },
           }),
         ),
-        open ? h(Lightbox, { src, alt: t('preview'), onClose: () => setOpen(false), t }) : null,
+        open ? h(Lightbox, { src, name: t('preview'), onClose: () => setOpen(false), t }) : null,
       )
     }
 
@@ -3187,6 +3168,21 @@ window.__ModuleLoader__.load({
           if (!service || typeof service.pickDirectory !== 'function') return null
           return await service.pickDirectory()
         }
+
+        // 统一按钮样式：注入一份带命名空间的样式表，插件卸载时整张移除。
+        ctx.effect(() => {
+          const element = document.createElement('style')
+          element.id = STYLE_ID
+          element.textContent = BUTTON_CSS
+          document.head.appendChild(element)
+          return () => {
+            try {
+              element.remove()
+            } catch {
+              // 已被宿主清理时忽略。
+            }
+          }
+        })
 
         ctx.effect(() =>
           ctx.slots.inject('tool.call.toolview', () =>

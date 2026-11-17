@@ -1,8 +1,8 @@
 {
   "name": "@tianxie2026/agnes-image-gen",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
-  "description": "Agnes 生图插件：侧栏「画图 / 图库」双页 + 文生图 / 图生图（上传或拖拽参考图）+ 多 API 来源（DPAPI 加密密钥）+ 提示词优化 + 图片元数据 + 对话工具 agnes_image_generate",
+  "description": "DSH 生图插件：侧栏「画图 / 图库」双页 + 文生图 / 图生图（上传或拖拽参考图）+ 统一按钮与查看器（缩放 / 下载 / 打开文件夹）+ 多 API 来源（DPAPI 加密密钥）+ 提示词优化 + 对话工具 agnes_image_generate",
   "type": "module",
   "license": "MIT",
   "author": "TianXie2026",
