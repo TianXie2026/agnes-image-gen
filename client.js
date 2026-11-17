@@ -483,14 +483,19 @@ window.__ModuleLoader__.load({
       sectionLabel: { fontSize: 12, color: 'var(--dsw-alias-label-secondary)' },
       viewer: {
         position: 'fixed',
-        inset: 0,
+        // 让出 Windows 自绘标题栏：DSH 用 --dsh-frame-chrome-top 发布标题栏高度，
+        // 覆盖层必须从标题栏下沿开始，否则会盖住窗口的最小化 / 最大化 / 关闭按钮。
+        top: 'var(--dsh-frame-chrome-top, 0px)',
+        left: 0,
+        right: 0,
+        bottom: 0,
         background: 'var(--dsw-alias-bg-overlay)',
         display: 'flex',
         alignItems: 'stretch',
         justifyContent: 'center',
         gap: 16,
         zIndex: 2000,
-        padding: 16,
+        padding: '12px 16px 16px',
         flexWrap: 'nowrap',
         overflow: 'hidden',
       },
@@ -519,12 +524,14 @@ window.__ModuleLoader__.load({
       },
       viewerToolbar: {
         position: 'absolute',
-        left: 12,
-        bottom: 12,
+        left: 24,
+        bottom: 24,
         zIndex: 2,
         display: 'flex',
         gap: 6,
         alignItems: 'center',
+        flexWrap: 'wrap',
+        maxWidth: 'calc(100% - 48px)',
         padding: '4px 8px',
         borderRadius: 999,
         background: 'var(--dsw-alias-bg-overlay)',
@@ -944,6 +951,8 @@ window.__ModuleLoader__.load({
 
       const onPointerDown = (event) => {
         if (event.button !== 0) return
+        // 只按在图片本体上才起拖；工具条按钮、侧栏、背景都保持原生点击。
+        if (scale <= 1 || !event.target.closest('img')) return
         event.preventDefault()
         dragRef.current = { id: event.pointerId, x: event.clientX, y: event.clientY, ox: offset.x, oy: offset.y }
         setDragging(true)
@@ -1043,15 +1052,15 @@ window.__ModuleLoader__.load({
               cursor: dragging ? 'grabbing' : scale > 1 ? 'grab' : 'move',
             },
           }),
-          h(
-            'div',
-            { style: css.viewerToolbar },
-            h(Button, { size: 'icon', title: t('zoomOut'), ariaLabel: t('zoomOut'), onClick: () => zoomBy(0.8) }, '−'),
-            h('span', { style: { minWidth: 46, textAlign: 'center' } }, `${Math.round(scale * 100)}%`),
-            h(Button, { size: 'icon', title: t('zoomIn'), ariaLabel: t('zoomIn'), onClick: () => zoomBy(1.25) }, '+'),
-            h(Button, { size: 'sm', onClick: reset }, t('zoomReset')),
-            nav,
-          ),
+        ),
+        h(
+          'div',
+          { style: css.viewerToolbar },
+          h(Button, { size: 'icon', title: t('zoomOut'), ariaLabel: t('zoomOut'), onClick: () => zoomBy(0.8) }, '−'),
+          h('span', { style: { minWidth: 46, textAlign: 'center' } }, `${Math.round(scale * 100)}%`),
+          h(Button, { size: 'icon', title: t('zoomIn'), ariaLabel: t('zoomIn'), onClick: () => zoomBy(1.25) }, '+'),
+          h(Button, { size: 'sm', onClick: reset }, t('zoomReset')),
+          nav,
         ),
         h(
           'div',
@@ -1059,8 +1068,12 @@ window.__ModuleLoader__.load({
           h(
             'div',
             { style: { display: 'flex', gap: 8, alignItems: 'flex-start' } },
-            h('strong', { style: { fontSize: 14, wordBreak: 'break-all' } }, name || t('preview')),
-            h(Button, { buttonRef: closeRef, size: 'sm', variant: 'ghost', style: { marginLeft: 'auto' }, onClick: onClose }, t('close')),
+            h('strong', { style: { fontSize: 14, wordBreak: 'break-all', flex: '1 1 auto', minWidth: 0 } }, name || t('preview')),
+            h(
+              Button,
+              { buttonRef: closeRef, size: 'icon', variant: 'ghost', style: { flex: '0 0 auto' }, title: t('close'), ariaLabel: t('close'), onClick: onClose },
+              '×',
+            ),
           ),
           h('div', { style: css.sectionLabel }, t('promptLabel')),
           meta?.prompt
@@ -2403,7 +2416,10 @@ window.__ModuleLoader__.load({
               {
                 style: {
                   position: 'fixed',
-                  inset: 0,
+                  top: 'var(--dsh-frame-chrome-top, 0px)',
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
                   zIndex: 2100,
                   padding: 24,
                   background: 'var(--dsw-alias-bg-overlay)',
