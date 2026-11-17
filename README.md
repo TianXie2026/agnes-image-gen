@@ -47,7 +47,7 @@ plugin_manager install_bundle, target = https://github.com/TianXie2026/agnes-ima
 
 ### C. 从 Releases 装
 
-1. 到 <https://github.com/TianXie2026/agnes-image-gen/releases> 下载 `tianxie2026-agnes-image-gen-0.5.0.tgz`（Release 资产名以页面为准）。
+1. 到 <https://github.com/TianXie2026/agnes-image-gen/releases> 下载 `agnes-image-gen-0.5.0.tgz`。
 2. `plugin_manager install_bundle, target = <tgz 的绝对路径>`。
 
 ### 安装后核对
