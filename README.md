@@ -52,7 +52,7 @@ plugin_manager install_bundle, target = https://github.com/TianXie2026/agnes-ima
 
 ### 安装后核对
 
-- `plugin_manager list_plugins`：能看到生图插件且为 enabled（显示名是 `生图`）。
+- `plugin_manager list_plugins`：能看到生图插件且为 enabled（显示名是 `Agnes 生图`）。
 - 刷新页面后，左侧栏出现「生图」。
 - 设置里出现「生图」一节。
 

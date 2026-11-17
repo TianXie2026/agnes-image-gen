@@ -109,23 +109,12 @@ API Key **不会明文保存**：保存时用 Windows DPAPI 加密（仅当前 W
 - 落盘失败但图已生成：图照常显示，警告行说明原因。
 - 图片渲染不出但已落盘：给占位与「打开文件夹」。
 
-## 升级说明（v0.4 → v0.5）
+## 版本说明（0.5.0 首个公开版本）
 
-- 包名改为 `@tianxie2026/agnes-image-gen`（公开仓库发布），行 id 仍是 `agnes-image-gen`；已安装的旧包需要卸载后重装一次。
-- 插件自带的默认输出目录改为 `~\Pictures\agnes-image`（配置里不再写死路径）；老用户行内的 `outputDir` 不受影响，仍按自己的值走。
-- 插件包不再预置 `baseUrl`/`apiKey` 等默认配置，全部回落到代码默认值。
-- 新增 `LICENSE`（MIT）、`.gitattributes`、`docs/screenshots/`。
-
-## 升级说明（v0.3 → v0.4）
-
-- `main` 面板拆成「画图 / 图库」两页，页签选择记在 `sessionStorage`；画图页改为左控右图。
-- `POST /delete` 兼容旧的 `{path}`，新增 `{paths:[…]}`（≤100）；`/history` 上限从 60 提到 200。
-- 配置与密钥记录格式不变，无需迁移。
-
-## 升级说明（v0.2 → v0.3）
-
-- 旧版单一 `baseUrl` + `agnes-image-gen/api-key` 记录会在第一次打开面板时自动迁移成默认来源；迁移在请求里做，因为插件激活期处于 Loader 的 HMR 事务中，不能写配置。
-- 迁移失败只记 `诊断 → 上次迁移`，不阻塞生成。
+- 本版为第一个公开发布；更早的 0.2–0.4 只在本机迭代过，没有公开包。
+- 本机旧版升级：包名从 `@local/agnes-image-gen` 改为 `@tianxie2026/agnes-image-gen`，需卸载后重装一次（行 id 仍是 `agnes-image-gen`，来源与密钥记录保留）。
+- 插件包不再预置 `baseUrl`/`apiKey`；未配置 `outputDir` 时输出到 `~\Pictures\agnes-image`。
+- 旧版单一 `baseUrl` + `agnes-image-gen/api-key` 记录会在第一次打开面板时自动迁移成默认来源（迁移在请求里做，因为插件激活期处于 Loader 的 HMR 事务中，不能写配置）；失败只记 `诊断 → 上次迁移`。
 
 ## 限制
 
