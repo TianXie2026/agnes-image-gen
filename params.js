@@ -4,7 +4,7 @@
 
 import { randomBytes } from 'node:crypto'
 
-export const VERSION = '0.5.1'
+export const VERSION = '0.6.0'
 export const TOOL_NAME = 'agnes_image_generate'
 export const ROUTE_PREFIX = '/agnes-image-gen'
 

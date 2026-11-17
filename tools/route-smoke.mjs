@@ -8,6 +8,7 @@
 // 环境变量：AGNES_ROUTE_ORIGIN 覆盖地址（默认 http://127.0.0.1:56414）；
 //           AGNES_API_KEY 作为 --key 的替代；AGNES_SOURCE_ID 指定已有来源。
 
+import { existsSync } from 'node:fs'
 import path from 'node:path'
 
 const origin = (process.env.AGNES_ROUTE_ORIGIN || 'http://127.0.0.1:56414').replace(/\/+$/, '')
@@ -228,10 +229,18 @@ if (wantGenerate) {
         file.status === 200 && file.bytes.length > 1000
           ? ok('GET /image?path（落盘文件）', `${file.bytes.length} B`)
           : fail('GET /image?path（落盘文件）', `HTTP ${file.status}`)
+        const hist = await request('/history?limit=50')
+        const entry = (hist.payload?.files ?? []).find((item) => item.path === result.path)
+        entry?.meta?.prompt
+          ? ok('history 带 sidecar 元数据', `prompt=${String(entry.meta.prompt).slice(0, 18)}…`)
+          : fail('history 带 sidecar 元数据', entry ? 'meta 缺失' : '列表里没有这张图')
         const removed = await post('/delete', { path: result.path })
         removed.status === 200 && removed.payload?.ok
           ? ok('POST /delete 删除测试图', removed.payload.path ?? result.path)
           : fail('POST /delete 删除测试图', `HTTP ${removed.status}`)
+        existsSync(`${result.path}.json`)
+          ? fail('删除图片同时删除 sidecar', 'sidecar 还在')
+          : ok('删除图片同时删除 sidecar')
         const gone = await request(`/image?path=${encodeURIComponent(result.path)}`)
         gone.status === 404 ? ok('删除后 /image 返回 404') : fail('删除后 /image 返回 404', `HTTP ${gone.status}`)
       }

@@ -10,12 +10,15 @@ import { buildRequestBody, generateImage, listModels, sniffMediaType } from './a
 import {
   defaultOutputDir,
   defaultOutputInfo,
+  deleteImageMeta,
   invalidateDefaultOutputDir,
   isInside,
   listImageFiles,
   readImageSize,
+  readLocalImage,
   resolveOutputDir,
   saveImageFile,
+  writeImageMeta,
 } from './files.js'
 import { optimizePrompt } from './optimize.js'
 import {
@@ -623,7 +626,8 @@ export class ImageService {
     } catch (error) {
       throw new AppError('delete-failed', `删除图片失败：${messageOf(error)}`, 500)
     }
-    return { ok: true, path: target, name: path.basename(target) }
+    const metaRemoved = await deleteImageMeta(target)
+    return { ok: true, path: target, name: path.basename(target), meta_removed: metaRemoved }
   }
 
   /** 校验任意路径确实在输出目录内（realpath 后比较，挡住 ../ 与符号链接）。 */
@@ -715,12 +719,13 @@ export class ImageService {
         legacyPlaintext: allowEnv && Boolean(this.settings.legacyApiKey),
       })
       const timeoutMs = normalizeTimeout(this.settings.timeoutMs)
+      const images = await materializeImages(params.images)
       const body = buildRequestBody({
         model: params.model,
         prompt: params.prompt,
         size: params.size,
         ratio: params.ratio,
-        images: params.images,
+        images,
       })
       const generated = await generateImage({
         baseUrl,
@@ -745,6 +750,30 @@ export class ImageService {
           })
         } catch (error) {
           warnings.push(`落盘失败：${messageOf(error)}`)
+        }
+      }
+
+      if (savedPath) {
+        try {
+          await writeImageMeta(savedPath, {
+            prompt: params.prompt,
+            revised_prompt: generated.revisedPrompt,
+            model: params.model,
+            size: params.size,
+            ratio: params.ratio,
+            source_id: params.sourceId,
+            source_label: params.sourceLabel,
+            media_type: generated.mediaType,
+            bytes: generated.bytes.length,
+            width: dimensions?.width,
+            height: dimensions?.height,
+            elapsed_ms: Date.now() - started,
+            created_at: new Date().toISOString(),
+            mode: params.images && params.images.length ? 'img2img' : 'txt2img',
+            refs: params.images ? params.images.length : 0,
+          })
+        } catch (error) {
+          warnings.push(`元数据写入失败：${messageOf(error)}`)
         }
       }
 
@@ -823,6 +852,33 @@ function normalizeImages(input) {
   for (const item of input) {
     if (typeof item !== 'string' || !item.trim()) continue
     out.push(item.trim())
+  }
+  return out
+}
+
+/**
+ * 把 images 里的本机绝对路径读成 data URL：Agnes 只接受 http(s) URL 或图片 base64。
+ * https / data:image 原样透传；其它形式直接报错，避免把半截字符串发给服务端。
+ */
+async function materializeImages(list) {
+  const out = []
+  for (const item of list ?? []) {
+    const text = String(item ?? '').trim()
+    if (!text) continue
+    if (/^data:image\//i.test(text) || /^https?:\/\//i.test(text)) {
+      out.push(text)
+      continue
+    }
+    if (!path.isAbsolute(text)) {
+      throw new AppError('bad-image', `图片地址必须是 https URL、data URL 或本机绝对路径：${text.slice(0, 80)}`, 400)
+    }
+    try {
+      const bytes = await readLocalImage(text)
+      const mediaType = sniffMediaType(bytes) || 'image/png'
+      out.push(`data:${mediaType};base64,${bytes.toString('base64')}`)
+    } catch (error) {
+      throw new AppError('bad-image', `读取输入图失败：${messageOf(error)}`, 400)
+    }
   }
   return out
 }

@@ -2,7 +2,7 @@
 // 图片尺寸探测、输出目录图片列表。
 // 只用 Node 内建模块：Host 插件跑在 Electron 的 Node 侧，DSH 的 fs 服务没有二进制写入口。
 
-import { access, constants, mkdir, open, readdir, readFile, stat, writeFile } from 'node:fs/promises'
+import { access, constants, mkdir, open, readdir, readFile, rename, stat, unlink, writeFile } from 'node:fs/promises'
 import { statfsSync, statSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -20,6 +20,10 @@ const MAX_BASE_LENGTH = 64
 const MAX_INPUT_BYTES = 20 * 1024 * 1024
 const HEADER_BYTES = 64 * 1024
 const MAX_HISTORY = 200
+/** 图片旁的元数据文件后缀：agnes-xxx.png → agnes-xxx.png.json。 */
+const META_SUFFIX = '.json'
+/** 元数据格式版本；结构变了就加版本号，旧文件读不出时返回 null。 */
+const META_VERSION = 1
 
 /** 家目录下的兜底位置（没有可用数据盘时使用）。 */
 export const DEFAULT_OUTPUT_DIR = path.join(os.homedir(), 'Pictures', 'agnes-image')
@@ -233,9 +237,62 @@ export async function readImageSizeOfFile(filePath) {
   }
 }
 
+/** 图片对应的元数据文件路径（与图片同目录，文件名后加 .json）。 */
+export function metaPathFor(imagePath) {
+  return `${imagePath}${META_SUFFIX}`
+}
+
 /**
- * 列出输出目录里的图片（按 mtime 倒序）。
- * @returns {Promise<Array<{path: string, name: string, bytes: number, mtime: number, size?: {width:number,height:number}}>>}
+ * 读图片的元数据 sidecar；不存在、损坏或版本不认识时返回 null，绝不抛错。
+ * @returns {Promise<Record<string, any> | null>}
+ */
+export async function readImageMeta(imagePath) {
+  if (typeof imagePath !== 'string' || !imagePath) return null
+  try {
+    const raw = await readFile(metaPathFor(imagePath), 'utf8')
+    const parsed = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object') return null
+    if (parsed.v !== META_VERSION) return null
+    if (typeof parsed.prompt !== 'string' || !parsed.prompt) return null
+    return parsed
+  } catch {
+    return null
+  }
+}
+
+/** 写元数据 sidecar（先写临时文件再改名，尽量原子）。 */
+export async function writeImageMeta(imagePath, meta) {
+  const payload = JSON.stringify({ ...meta, v: META_VERSION }, null, 2)
+  const target = metaPathFor(imagePath)
+  const temp = `${target}.tmp`
+  try {
+    await writeFile(temp, payload, 'utf8')
+    await rename(temp, target)
+  } catch (error) {
+    try {
+      await unlink(temp)
+    } catch {
+      // 临时文件可能根本没写出来。
+    }
+    await writeFile(target, payload, 'utf8')
+  }
+  return target
+}
+
+/** 删除元数据 sidecar；文件不存在不算失败。 */
+export async function deleteImageMeta(imagePath) {
+  if (typeof imagePath !== 'string' || !imagePath) return false
+  try {
+    await unlink(metaPathFor(imagePath))
+    return true
+  } catch {
+    return false
+  }
+}
+
+/**
+ * 列出输出目录里的图片（按 mtime 倒序），顺带读元数据与尺寸。
+ * @returns {Promise<Array<{path: string, name: string, bytes: number, mtime: number, meta: Record<string, any> | null, width?: number, height?: number, size?: {width:number,height:number}}>>}
  */
 export async function listImageFiles(dir, limit = 24) {
   const target = path.resolve(dir)
@@ -261,9 +318,33 @@ export async function listImageFiles(dir, limit = 24) {
   files.sort((a, b) => b.mtime - a.mtime)
   const limited = files.slice(0, Math.max(1, Math.min(Number(limit) || 0, MAX_HISTORY)))
   for (const item of limited) {
-    item.size = await readImageSizeOfFile(item.path)
+    const meta = await readImageMeta(item.path)
+    let width = Number.isFinite(meta?.width) ? meta.width : undefined
+    let height = Number.isFinite(meta?.height) ? meta.height : undefined
+    let size
+    if (!width || !height) {
+      size = await readImageSizeOfFile(item.path)
+      if (size) {
+        width = width || size.width
+        height = height || size.height
+      }
+    }
+    if (meta) item.meta = meta
+    if (width) item.width = width
+    if (height) item.height = height
+    if (size) item.size = size
   }
   return limited
+}
+
+/** 文件是否已存在。 */
+export async function exists(target) {
+  try {
+    await stat(target)
+    return true
+  } catch {
+    return false
+  }
 }
 
 /** target 是否位于 dir 之内（两者都应是已经 resolve/realpath 的绝对路径）。 */
@@ -277,13 +358,4 @@ export function isInside(dir, target) {
 
 function readUInt32BE(bytes, offset) {
   return ((bytes[offset] << 24) >>> 0) + (bytes[offset + 1] << 16) + (bytes[offset + 2] << 8) + bytes[offset + 3]
-}
-
-async function exists(target) {
-  try {
-    await access(target, constants.F_OK)
-    return true
-  } catch {
-    return false
-  }
 }

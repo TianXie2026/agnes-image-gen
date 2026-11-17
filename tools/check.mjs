@@ -4,16 +4,24 @@
 // 请求体形状、DPAPI 加解密往返（需要 Windows + PowerShell）。
 
 import assert from 'node:assert/strict'
+import os from 'node:os'
 import path from 'node:path'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 
 import { buildRequestBody } from '../api.js'
 import {
   DEFAULT_OUTPUT_DIR,
   defaultOutputDir,
+  deleteImageMeta,
+  exists,
+  listImageFiles,
+  metaPathFor,
   pickDefaultOutputDir,
+  readImageMeta,
   readImageSize,
   resolveOutputDir,
   sanitizeBaseName,
+  writeImageMeta,
   isInside,
   timestampName,
 } from '../files.js'
@@ -221,6 +229,57 @@ await test('pixelHint 提供档位×比例像素', () => {
   assert.deepEqual(pixelHint('2K', '16:9'), [2624, 1472])
   assert.deepEqual(pixelHint('1K', '9:16'), [736, 1312])
   assert.equal(pixelHint('1024x768', '1:1'), undefined)
+})
+
+await test('图片 sidecar 元数据写入 / 读取 / 删除', async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'agnes-meta-'))
+  try {
+    const file = path.join(dir, 'pic.png')
+    const png = Buffer.alloc(33)
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(png, 0)
+    png.writeUInt32BE(13, 8)
+    png.write('IHDR', 12, 'ascii')
+    png.writeUInt32BE(640, 16)
+    png.writeUInt32BE(480, 20)
+    await writeFile(file, png)
+
+    const meta = {
+      prompt: '一只橘猫，水彩',
+      model: 'agnes-image-2.5-flash',
+      size: '1K',
+      ratio: '1:1',
+      width: 640,
+      height: 480,
+      bytes: png.length,
+      created_at: new Date().toISOString(),
+      mode: 'txt2img',
+      refs: 0,
+      media_type: 'image/png',
+    }
+    await writeImageMeta(file, meta)
+    assert.equal(JSON.parse(await readFile(metaPathFor(file), 'utf8')).v, 1)
+    const back = await readImageMeta(file)
+    assert.equal(back.prompt, meta.prompt)
+    assert.equal(back.model, meta.model)
+
+    const listed = await listImageFiles(dir, 5)
+    assert.equal(listed.length, 1)
+    assert.equal(listed[0].meta.prompt, meta.prompt)
+    assert.equal(listed[0].width, 640)
+    assert.equal(listed[0].height, 480)
+
+    await writeFile(metaPathFor(file), '{ broken json')
+    assert.equal(await readImageMeta(file), null)
+    const broken = await listImageFiles(dir, 5)
+    assert.equal(broken.length, 1)
+    assert.equal(broken[0].meta, undefined)
+    assert.equal(broken[0].width, 640)
+
+    await deleteImageMeta(file)
+    assert.equal(await exists(metaPathFor(file)), false)
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
 })
 
 await test('DPAPI 加密往返且密文不含明文', async () => {

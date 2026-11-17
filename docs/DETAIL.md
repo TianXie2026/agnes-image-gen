@@ -15,9 +15,11 @@
   - **画图**：左列是控制区（提示词、优化提示词、API 来源（多来源时可选）、模型、尺寸（1K/2K/3K/4K 或精确 WxH）、比例（8 档）、预计像素），右列是结果区（大图、参数行、打开文件夹/下载/复制路径/删除/再来一张）。
   - **图库**：输出目录里的历史图片，按本地日期分组（今天 / 昨天 / M月D日），支持勾选、按组全选、清除选择、批量删除（两步确认），单张也能直接删。
 - 「优化提示词」把当前提示词发给同一来源的对话模型（默认 `agnes-3.0-flash`）改写，用户自己决定是否采用，可一键「撤销」。
-- 结果区参数行：来源 · 模型 · 尺寸 · 比例 · 耗时 · 体积 · 像素；图片点击可全屏预览。
-- 历史提示词以胶囊形式列出：点击填入、`×` 删除单条、可一次清空。
-- 每张图同时落盘（默认本项目 `outputs\`），文件名 `agnes-YYYYMMDD-HHmmss-xxxxxx.png`，重名自动加 `-2`。
+- 结果区参数行：来源 · 模型 · 尺寸 · 比例 · 耗时 · 体积 · 像素；点图进入查看器。
+- **查看器**：滚轮或 `+ / −` 缩放（0.25×–8×）、拖拽平移、双击还原；`另存为`、`复制图片`、`发到会话`（复制图片并切到对话，用户 `Ctrl+V` 粘贴）、`复制提示词`；右侧显示提示词、修订提示词与生成参数。
+- **图生图 / 参考图**：图库查看器里的「用作参考图」会把图片带回画图页，最多 4 张，`×` 移除；下次生成以这些图作为输入。
+- 每张图同时落盘（默认项目 `outputs\`，未配置时用非 C 盘默认目录），文件名 `agnes-YYYYMMDD-HHmmss-xxxxxx.png`，重名自动加 `-2`；旁边写一个同名 `.json` 元数据（见下）。
+- 历史提示词不再显示在画图页（旧版 localStorage 数据保留但不再读取）。
 - 对话里仍保留工具卡片：Agent 调用时在对话内显示缩略图 + 参数行，点图看大图；可指定 `source` 用哪个来源。
 
 ## 首次使用
@@ -42,8 +44,8 @@ API Key **不会明文保存**：保存时用 Windows DPAPI 加密（仅当前 W
 2. 需要时切换来源，选模型 / 尺寸 / 比例。
 3. 点「生成」；耗时约 10–60 秒，可随时取消。
 4. 结果出来后：看图、打开文件夹、下载、复制路径、删除（点两次确认），或「再来一张」沿用当前提示词。
-5. 想看以前画的，切到「图库」：按日期分组，勾选后批量删除；历史提示词和图片都可以随时删掉。
-   **图片删除会同时删掉磁盘上的文件，不可恢复。**
+5. 想看以前画的，切到「图库」：按日期分组，勾选后批量删除；点图进查看器可以缩放、另存、复制、发到会话、复制提示词、用作参考图。
+   **图片删除会同时删掉磁盘上的文件和同名 `.json` 元数据，不可恢复。**
 
 对话里：直接说需求，例如
 
@@ -77,7 +79,8 @@ API Key **不会明文保存**：保存时用 Windows DPAPI 加密（仅当前 W
 
 - 插件配置（profile `cordis.patch.yml`）：`apiKeyEnv`、`sources`（id/名称/Base URL）、`defaultSourceId`、`defaultModel`、`defaultSize`、`defaultRatio`、`optimizeModel`、`outputDir`、`timeoutMs`。**不含密钥。**
 - 密钥密文：DSH 凭据库（`<harness home>\.credentials.yaml`）里的 `agnes-image-gen/api-key-<来源 id>` 记录，`kind: grant`，`payload: {scheme: dpapi-currentuser-v1, cipher: ...}`。
-- 提示词历史：浏览器 localStorage（`agnes-image-gen/prompt-history`，最多 20 条，仅本机）。
+- 图片元数据：每张图旁边的 `<图片名>.json`（`v: 1`），字段 `prompt`、`revised_prompt`、`model`、`size`、`ratio`、`source_id`、`source_label`、`media_type`、`bytes`、`width`、`height`、`elapsed_ms`、`created_at`、`mode`（`txt2img` / `img2img`）、`refs`（参考图张数）。读不出时按「旧图」处理，不影响出图。
+- 提示词历史：**v0.6.0 起不再读写**；旧版本的 localStorage 数据（`agnes-image-gen/prompt-history`）留在浏览器里，不会被清理。
 
 ## HTTP 接口（面板用）
 
@@ -123,6 +126,15 @@ API Key **不会明文保存**：保存时用 Windows DPAPI 加密（仅当前 W
 - 结果缓存 5 分钟；缓存的盘符消失（拔盘）会自动重算。设置页保存配置时也会刷新缓存。
 - `/state` 新增 `outputDirSource`（`config`/`default`）、`defaultOutputDir`、`defaultOutputFreeBytes`，供设置页显示。
 - 已配置 `outputDir` 的机器行为不变；默认值不会自动写进配置，避免静默改配置。
+
+## 版本说明（0.6.0）
+
+- 画图页不再显示历史提示词（旧 localStorage 数据保留，不再读取）。
+- 新增图片查看器：缩放（0.25×–8×，滚轮 / 按钮 / 键盘 `+` `−` `0`）、拖拽平移、双击还原；另存为、复制图片、发到会话（复制图片并切到对话）、复制提示词；显示提示词、修订提示词与生成参数。
+- 图库查看器里的「用作参考图」把图片带回画图页（最多 4 张），生成时作为图生图输入。
+- 每张图旁边写同名 `.json` 元数据；`/history` 的条目带 `meta`/`width`/`height`；删图时一并删 `.json`。旧图没有 sidecar 也能正常列出与删除（查看器提示无提示词）。
+- 工具 `images` 参数里的本机绝对路径会在发送前转成 `data:` URL（此前会 400：`extra_body.image must be a public http(s) URL or valid image base64`）。
+- 无需迁移；升级后刷新页面即可。
 
 ## 版本说明（0.5.1）
 
