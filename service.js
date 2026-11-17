@@ -8,7 +8,9 @@ import path from 'node:path'
 
 import { buildRequestBody, generateImage, listModels, sniffMediaType } from './api.js'
 import {
-  DEFAULT_OUTPUT_DIR,
+  defaultOutputDir,
+  defaultOutputInfo,
+  invalidateDefaultOutputDir,
   isInside,
   listImageFiles,
   readImageSize,
@@ -104,6 +106,7 @@ export class ImageService {
     }
     const defaultRow = sources.find((row) => row.isDefault) ?? sources[0]
     const job = this.info(jobId) ?? this.info(this.lastJobId)
+    const defaultInfo = defaultOutputInfo()
     return {
       ok: true,
       version: VERSION,
@@ -113,10 +116,13 @@ export class ImageService {
         defaultSize: this.settings.defaultSize,
         defaultRatio: this.settings.defaultRatio,
         optimizeModel: this.settings.optimizeModel,
-        outputDir: this.settings.outputDir || DEFAULT_OUTPUT_DIR,
+        outputDir: this.settings.outputDir || defaultInfo.dir,
         timeoutMs: this.settings.timeoutMs,
         apiKeyEnv: this.settings.apiKeyEnv,
       },
+      outputDirSource: this.settings.outputDir ? 'config' : 'default',
+      defaultOutputDir: defaultInfo.dir,
+      defaultOutputFreeBytes: defaultInfo.freeBytes,
       sources,
       key: defaultRow?.key ?? {
         state: 'none',
@@ -170,6 +176,7 @@ export class ImageService {
       return next
     })
     this.secret.invalidate()
+    invalidateDefaultOutputDir()
     return { ok: true, patch }
   }
 
@@ -559,7 +566,7 @@ export class ImageService {
   // ---------------------------------------------------------------- 历史与文件
 
   async history(limit = 24) {
-    const dir = this.settings.outputDir || DEFAULT_OUTPUT_DIR
+    const dir = this.settings.outputDir || defaultOutputDir()
     const files = await listImageFiles(dir, limit)
     return { dir, files }
   }
@@ -624,7 +631,7 @@ export class ImageService {
     const input = String(rawPath ?? '').trim()
     if (!input) throw new AppError('bad-path', '缺少 path 参数。', 400)
     if (!path.isAbsolute(input)) throw new AppError('bad-path', '只接受绝对路径。', 400)
-    const dir = this.settings.outputDir || DEFAULT_OUTPUT_DIR
+    const dir = this.settings.outputDir || defaultOutputDir()
     let base
     let target
     try {
@@ -651,7 +658,7 @@ export class ImageService {
       spawnReveal(target, true)
       return { ok: true, target }
     }
-    const dir = this.settings.outputDir || DEFAULT_OUTPUT_DIR
+    const dir = this.settings.outputDir || defaultOutputDir()
     spawnReveal(dir, false)
     return { ok: true, target: dir }
   }

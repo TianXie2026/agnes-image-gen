@@ -8,6 +8,8 @@
 // 环境变量：AGNES_ROUTE_ORIGIN 覆盖地址（默认 http://127.0.0.1:56414）；
 //           AGNES_API_KEY 作为 --key 的替代；AGNES_SOURCE_ID 指定已有来源。
 
+import path from 'node:path'
+
 const origin = (process.env.AGNES_ROUTE_ORIGIN || 'http://127.0.0.1:56414').replace(/\/+$/, '')
 const prefix = `${origin}/agnes-image-gen`
 
@@ -132,6 +134,16 @@ let state
   if (state.diagnostics?.legacyPlaintext) console.log('     注意：配置里仍有旧版明文 apiKey')
   if (state.diagnostics?.legacySources) console.log('     注意：仍检测到旧版 baseUrl，启动时会迁移')
   if (!state.sources?.length) console.log('     注意：还没有 API 来源（交付态应为空，由用户在设置页添加）')
+  ok(
+    '默认输出目录',
+    `${state.defaultOutputDir || '(缺失)'} · 空闲=${state.defaultOutputFreeBytes ?? '未知'} · 来源=${state.outputDirSource}`,
+  )
+  if (!state.defaultOutputDir || !path.isAbsolute(state.defaultOutputDir)) fail('默认输出目录', '不是绝对路径')
+  if (state.outputDirSource === 'default' && /^[A-Za-z]:\\/.test(state.defaultOutputDir) && /^[cC]:\\/.test(state.defaultOutputDir)) {
+    console.log('     注意：没有可用的非 C 盘，默认目录回落到 C 盘 Pictures 目录')
+  } else if (state.outputDirSource === 'default') {
+    console.log('     默认目录已避开 C 盘')
+  }
 }
 
 // 3) 建来源 / 存 Key（可选）

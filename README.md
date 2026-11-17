@@ -47,7 +47,7 @@ plugin_manager install_bundle, target = https://github.com/TianXie2026/agnes-ima
 
 ### C. 从 Releases 装
 
-1. 到 <https://github.com/TianXie2026/agnes-image-gen/releases> 下载 `agnes-image-gen-0.5.0.tgz`。
+1. 到 <https://github.com/TianXie2026/agnes-image-gen/releases> 下载 `agnes-image-gen-0.5.1.tgz`。
 2. `plugin_manager install_bundle, target = <tgz 的绝对路径>`。
 
 ### 安装后核对
@@ -117,7 +117,7 @@ plugin_manager install_bundle, target = https://github.com/TianXie2026/agnes-ima
 | `defaultSize` | `2K` | 同上 |
 | `defaultRatio` | `1:1` | 同上 |
 | `optimizeModel` | `agnes-3.0-flash` | 提示词优化模型 |
-| `outputDir` | `~\Pictures\agnes-image` | 落盘目录（绝对路径） |
+| `outputDir` | 自动：空闲最大的非 C 盘 `\Pictures\agnes-image`（只有 C 盘时 `~\Pictures\agnes-image`） | 落盘目录（绝对路径）；设置页可改，或点「选择…」 |
 | `timeoutMs` | `300000` | 30–600 秒 |
 | `apiKeyEnv` | `AGNES_API_KEY` | 默认来源没有存储密钥时回退到该环境变量 |
 
@@ -133,9 +133,9 @@ plugin_manager install_bundle, target = https://github.com/TianXie2026/agnes-ima
 
 ## 输出目录
 
-- 默认 `~\Pictures\agnes-image`（Windows 下即 `C:\Users\<你>\Pictures\agnes-image`）。
+- 默认放在**非 C 盘**：按盘符 D–Z 里空闲空间最大的盘，生成 `<盘>:\Pictures\agnes-image`（例如 `D:\Pictures\agnes-image`）；机器只有 C 盘时回落到 `~\Pictures\agnes-image`。
 - 文件名 `agnes-YYYYMMDD-HHmmss-xxxxxx.png`，重名自动加 `-2`。
-- 想换目录：设置页改，或单次传 `save_dir`。
+- 想换目录：设置页输入，或点「选择…」用系统文件夹选择框；也可以单次传 `save_dir`。设置页会显示当前生效目录与默认目录的空闲空间。
 - 面板里「删除图片」与图库「删除选中」会直接删磁盘文件，不可恢复（两步确认）。
 
 ## HTTP 路由（Host）

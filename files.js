@@ -3,6 +3,7 @@
 // 只用 Node 内建模块：Host 插件跑在 Electron 的 Node 侧，DSH 的 fs 服务没有二进制写入口。
 
 import { access, constants, mkdir, open, readdir, readFile, stat, writeFile } from 'node:fs/promises'
+import { statfsSync, statSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 
@@ -20,14 +21,90 @@ const MAX_INPUT_BYTES = 20 * 1024 * 1024
 const HEADER_BYTES = 64 * 1024
 const MAX_HISTORY = 200
 
-/** 没有配置输出目录时的兜底位置。 */
+/** 家目录下的兜底位置（没有可用数据盘时使用）。 */
 export const DEFAULT_OUTPUT_DIR = path.join(os.homedir(), 'Pictures', 'agnes-image')
 
-/** 解析本次请求要写入的目录：单次覆盖 > 插件配置 > 兜底目录。必须是绝对路径。 */
+const DEFAULT_DIR_TTL_MS = 5 * 60 * 1000
+let defaultDirCache = null
+
+/**
+ * 纯函数：从候选盘里挑默认输出目录。
+ * 规则：排除 C 盘（大小写不敏感）与非绝对根，按空闲空间降序；没有可用盘时回落家目录 Pictures。
+ * @param {{ drives: Array<{ root: string, freeBytes?: number }>, homedir: string }} input
+ */
+export function pickDefaultOutputDir({ drives, homedir }) {
+  const candidates = []
+  for (const drive of Array.isArray(drives) ? drives : []) {
+    const root = typeof drive?.root === 'string' ? drive.root.trim() : ''
+    if (!root || !path.isAbsolute(root)) continue
+    const driveLetter = path.parse(root).root.slice(0, 2).toUpperCase()
+    if (driveLetter === 'C:') continue
+    candidates.push({ root, freeBytes: Number.isFinite(drive?.freeBytes) ? drive.freeBytes : 0 })
+  }
+  candidates.sort((a, b) => b.freeBytes - a.freeBytes)
+  const base = candidates.length > 0 ? candidates[0].root : homedir || os.homedir()
+  return path.join(base, 'Pictures', 'agnes-image')
+}
+
+function listDriveRoots() {
+  const roots = []
+  for (let code = 'D'.charCodeAt(0); code <= 'Z'.charCodeAt(0); code += 1) {
+    const root = `${String.fromCharCode(code)}:\\`
+    try {
+      if (!statSync(root).isDirectory()) continue
+    } catch {
+      continue
+    }
+    let freeBytes = 0
+    try {
+      const info = statfsSync(root)
+      freeBytes = Number(info.bavail ?? info.bfree ?? 0) * Number(info.bsize ?? 0)
+    } catch {
+      freeBytes = 0
+    }
+    roots.push({ root, freeBytes: Number.isFinite(freeBytes) ? freeBytes : 0 })
+  }
+  return roots
+}
+
+/**
+ * 运行期默认输出目录：Windows 上优先空闲最大的非 C 盘，其它情况回落家目录 Pictures。
+ * 结果缓存 5 分钟；缓存的盘根消失时自动重算。
+ */
+export function defaultOutputDir() {
+  if (os.platform() !== 'win32') return DEFAULT_OUTPUT_DIR
+  const now = Date.now()
+  if (defaultDirCache && now - defaultDirCache.at < DEFAULT_DIR_TTL_MS) {
+    const root = path.parse(defaultDirCache.dir).root
+    try {
+      if (statSync(root).isDirectory()) return defaultDirCache.dir
+    } catch {
+      // 盘被拔出/卸载：走重算
+    }
+  }
+  const drives = listDriveRoots()
+  const dir = pickDefaultOutputDir({ drives, homedir: os.homedir() })
+  const chosen = drives.find((drive) => path.join(drive.root, 'Pictures', 'agnes-image') === dir)
+  defaultDirCache = { dir, freeBytes: chosen ? chosen.freeBytes : null, at: now }
+  return dir
+}
+
+/** 默认目录的缓存信息（供 UI 显示空闲空间）。 */
+export function defaultOutputInfo() {
+  defaultOutputDir()
+  return { dir: defaultDirCache?.dir ?? DEFAULT_OUTPUT_DIR, freeBytes: defaultDirCache?.freeBytes ?? null }
+}
+
+/** 让默认目录缓存失效（用户可能刚插了盘）。 */
+export function invalidateDefaultOutputDir() {
+  defaultDirCache = null
+}
+
+/** 解析本次请求要写入的目录：单次覆盖 > 插件配置 > 默认目录。必须是绝对路径。 */
 export function resolveOutputDir(configDir, overrideDir) {
   const override = typeof overrideDir === 'string' && overrideDir.trim() ? overrideDir.trim() : ''
   const configured = typeof configDir === 'string' && configDir.trim() ? configDir.trim() : ''
-  const candidate = override || configured || DEFAULT_OUTPUT_DIR
+  const candidate = override || configured || defaultOutputDir()
   if (!path.isAbsolute(candidate)) {
     throw new Error(`输出目录必须是绝对路径：${candidate}`)
   }

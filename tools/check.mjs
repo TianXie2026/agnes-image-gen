@@ -4,9 +4,19 @@
 // 请求体形状、DPAPI 加解密往返（需要 Windows + PowerShell）。
 
 import assert from 'node:assert/strict'
+import path from 'node:path'
 
 import { buildRequestBody } from '../api.js'
-import { readImageSize, resolveOutputDir, sanitizeBaseName, isInside, timestampName } from '../files.js'
+import {
+  DEFAULT_OUTPUT_DIR,
+  defaultOutputDir,
+  pickDefaultOutputDir,
+  readImageSize,
+  resolveOutputDir,
+  sanitizeBaseName,
+  isInside,
+  timestampName,
+} from '../files.js'
 import {
   LEGACY_RECORD_KEY,
   MAX_SOURCES,
@@ -150,6 +160,33 @@ await test('resolveOutputDir 只接受绝对路径', () => {
   assert.throws(() => resolveOutputDir('relative', ''), /绝对路径/)
   assert.equal(isInside('E:\\a', 'E:\\a\\b.png'), true)
   assert.equal(isInside('E:\\a', 'E:\\ab\\b.png'), false)
+})
+
+await test('pickDefaultOutputDir 避开 C 盘并选空闲最大的盘', () => {
+  const picked = pickDefaultOutputDir({
+    drives: [
+      { root: 'C:\\', freeBytes: 1e12 },
+      { root: 'D:\\', freeBytes: 2e12 },
+      { root: 'E:\\', freeBytes: 1.5e12 },
+    ],
+    homedir: 'C:\\Users\\tester',
+  })
+  assert.equal(picked, path.join('D:\\', 'Pictures', 'agnes-image'))
+})
+
+await test('pickDefaultOutputDir 只有 C 盘时回落家目录', () => {
+  const picked = pickDefaultOutputDir({
+    drives: [{ root: 'C:\\', freeBytes: 1e12 }],
+    homedir: 'C:\\Users\\tester',
+  })
+  assert.equal(picked, path.join('C:\\Users\\tester', 'Pictures', 'agnes-image'))
+})
+
+await test('resolveOutputDir 未配置时走默认目录', () => {
+  const fallback = resolveOutputDir('', '')
+  assert.equal(path.isAbsolute(fallback), true)
+  assert.equal(fallback, defaultOutputDir())
+  assert.equal(path.isAbsolute(DEFAULT_OUTPUT_DIR), true)
 })
 
 await test('sanitizeBaseName 清洗非法字符与保留名', () => {

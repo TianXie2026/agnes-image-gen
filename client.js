@@ -124,6 +124,12 @@ window.__ModuleLoader__.load({
       legacySources: '检测到旧版 Base URL，启动时会自动迁移为来源',
       defaultSourceLabel: '默认来源',
       defaultModelLabel: '默认画图模型',
+      chooseFolder: '选择…',
+      effectiveDir: '当前生效',
+      defaultDirHint: '未设置时默认：{path}',
+      freeSpace: '空闲 {free}',
+      usingDefaultDir: '未设置时使用默认目录',
+      pickFailed: '打开目录选择框失败',
       tabCreate: '画图',
       tabGallery: '图库',
       openGallery: '打开图库',
@@ -248,6 +254,12 @@ window.__ModuleLoader__.load({
       legacySources: 'Legacy base URL detected; it is migrated to a source on start',
       defaultSourceLabel: 'Default source',
       defaultModelLabel: 'Default image model',
+      chooseFolder: 'Choose…',
+      effectiveDir: 'Effective',
+      defaultDirHint: 'Default when unset: {path}',
+      freeSpace: '{free} free',
+      usingDefaultDir: 'Uses the default folder',
+      pickFailed: 'Could not open the folder picker',
       tabCreate: 'Create',
       tabGallery: 'Gallery',
       openGallery: 'Open gallery',
@@ -691,13 +703,23 @@ window.__ModuleLoader__.load({
     }
 
     // ------------------------------------------------------------- 未配置引导 / 面板共用表单
-    function SetupCard({ state, t, onSaved }) {
+    function SetupCard({ state, t, onSaved, pickDirectory }) {
       const [name, setName] = useState('')
       const [baseUrl, setBaseUrl] = useState('')
       const [keyValue, setKeyValue] = useState('')
+      const [outputDir, setOutputDir] = useState('')
       const [busy, setBusy] = useState(false)
       const [error, setError] = useState('')
       const [notice, setNotice] = useState('')
+
+      const chooseFolder = useCallback(async () => {
+        try {
+          const picked = await pickDirectory?.()
+          if (picked) setOutputDir(picked)
+        } catch (failure) {
+          setError(failure?.message || t('pickFailed'))
+        }
+      }, [pickDirectory, t])
 
       const save = useCallback(async () => {
         setBusy(true)
@@ -717,6 +739,10 @@ window.__ModuleLoader__.load({
             await api('/key', { method: 'POST', retry: true, body: { sourceId, value: keyValue.trim() } })
             setKeyValue('')
           }
+          if (outputDir.trim()) {
+            await api('/config', { method: 'POST', retry: true, body: { outputDir: outputDir.trim() } })
+            setOutputDir('')
+          }
           setNotice(t('sourceSaved'))
           await onSaved?.()
         } catch (failure) {
@@ -724,7 +750,7 @@ window.__ModuleLoader__.load({
         } finally {
           setBusy(false)
         }
-      }, [baseUrl, keyValue, name, onSaved, t])
+      }, [baseUrl, keyValue, name, onSaved, outputDir, t])
 
       return h(
         'div',
@@ -774,6 +800,31 @@ window.__ModuleLoader__.load({
           }),
         ),
         h(
+          'label',
+          { style: css.field },
+          h('span', { style: css.label }, t('outputDirLabel')),
+          h(
+            'div',
+            { style: css.row },
+            h('input', {
+              type: 'text',
+              style: { ...css.input, flex: '1 1 240px', fontFamily: 'ui-monospace, monospace' },
+              value: outputDir,
+              spellCheck: false,
+              placeholder: state?.defaultOutputDir || '',
+              onChange: (event) => setOutputDir(event.target.value),
+            }),
+            pickDirectory
+              ? h(
+                  'button',
+                  { type: 'button', style: css.secondary, onClick: chooseFolder },
+                  t('chooseFolder'),
+                )
+              : null,
+          ),
+          h('div', { style: css.muted }, dirHint(t, state)),
+        ),
+        h(
           'div',
           { style: css.shelfRow },
           h(
@@ -805,10 +856,20 @@ window.__ModuleLoader__.load({
       return state === 'env' && key?.envName ? `${text} · ${key.envName}` : text
     }
 
+    /** 输出目录提示：未设置时用的默认目录 + 空闲空间。 */
+    function dirHint(t, state) {
+      const dir = state?.defaultOutputDir || ''
+      if (!dir) return t('usingDefaultDir')
+      const free = Number.isFinite(state?.defaultOutputFreeBytes)
+        ? `（${t('freeSpace').replace('{free}', formatBytes(state.defaultOutputFreeBytes))}）`
+        : ''
+      return `${t('defaultDirHint').replace('{path}', dir)}${free}`
+    }
+
     // ------------------------------------------------------------- 侧栏主面板（画图 / 图库 两页）
     const PAGE_KEY = 'agnes-image-gen/page'
 
-    function PanelShell({ t }) {
+    function PanelShell({ t, pickDirectory }) {
       const [page, setPage] = useState(() => {
         try {
           return window.sessionStorage.getItem(PAGE_KEY) === 'gallery' ? 'gallery' : 'create'
@@ -853,7 +914,7 @@ window.__ModuleLoader__.load({
         h(
           'div',
           { role: 'tabpanel', style: page === 'create' ? undefined : css.hidden },
-          h(CreateView, { t, onOpenGallery: () => go('gallery') }),
+          h(CreateView, { t, pickDirectory, onOpenGallery: () => go('gallery') }),
         ),
         galleryMounted
           ? h(
@@ -865,7 +926,7 @@ window.__ModuleLoader__.load({
       )
     }
 
-    function CreateView({ t, onOpenGallery }) {
+    function CreateView({ t, pickDirectory, onOpenGallery }) {
       const [state, setState] = useState(undefined)
       const [loading, setLoading] = useState(true)
       const [error, setError] = useState('')
@@ -1122,7 +1183,7 @@ window.__ModuleLoader__.load({
             'div',
             { style: css.canvasLeft },
             loading ? h('div', { style: css.muted }, h(Spinner, { label: t('generating') })) : null,
-            state && !sources.length ? h(SetupCard, { state, t, onSaved: load }) : null,
+            state && !sources.length ? h(SetupCard, { state, t, onSaved: load, pickDirectory }) : null,
             state && sources.length && !keyReady ? h('div', { style: css.warn }, t('needSourceKey')) : null,
             h(
               'div',
@@ -1654,7 +1715,7 @@ window.__ModuleLoader__.load({
       )
     }
     // ------------------------------------------------------------- 设置页
-    function SettingsPage({ t }) {
+    function SettingsPage({ t, pickDirectory }) {
       const [state, setState] = useState(undefined)
       const [loading, setLoading] = useState(true)
       const [error, setError] = useState('')
@@ -2133,8 +2194,27 @@ window.__ModuleLoader__.load({
                 style: { ...css.input, flex: '1 1 280px', fontFamily: 'ui-monospace, monospace' },
                 value: outputDir,
                 spellCheck: false,
+                placeholder: state?.defaultOutputDir || '',
                 onChange: (event) => setOutputDir(event.target.value),
               }),
+              pickDirectory
+                ? h(
+                    'button',
+                    {
+                      type: 'button',
+                      style: css.secondary,
+                      onClick: async () => {
+                        try {
+                          const picked = await pickDirectory()
+                          if (picked) setOutputDir(picked)
+                        } catch (failure) {
+                          setError(failure?.message || t('pickFailed'))
+                        }
+                      },
+                    },
+                    t('chooseFolder'),
+                  )
+                : null,
               h(
                 'button',
                 {
@@ -2144,6 +2224,11 @@ window.__ModuleLoader__.load({
                 },
                 t('openFolder'),
               ),
+            ),
+            h(
+              'div',
+              { style: css.muted },
+              `${t('effectiveDir')}：${state?.config?.outputDir || '—'} · ${dirHint(t, state)}`,
             ),
           ),
           h(
@@ -2324,7 +2409,7 @@ window.__ModuleLoader__.load({
 
     // ------------------------------------------------------------- 注册
     return {
-      inject: ['slots', 'locale'],
+      inject: ['slots', 'locale', 'uiWorkspace'],
       apply(ctx) {
         ctx.effect(() => {
           const disposers = []
@@ -2356,6 +2441,12 @@ window.__ModuleLoader__.load({
 
         const t = ctx.locale.bind(NS)
 
+        const pickDirectory = async () => {
+          const service = ctx.get('uiWorkspace')
+          if (!service || typeof service.pickDirectory !== 'function') return null
+          return await service.pickDirectory()
+        }
+
         ctx.effect(() =>
           ctx.slots.inject('tool.call.toolview', () =>
             ctx.slots.register(
@@ -2374,13 +2465,13 @@ window.__ModuleLoader__.load({
         // 主面板：点侧栏行时由 layout 按同名 key 选中。
         ctx.slots.register(
           { name: 'main', key: PANEL_ID, locale: NS, inject: () => ({ t }) },
-          () => h(PanelShell, { t }),
+          () => h(PanelShell, { t, pickDirectory }),
         )
 
         // 设置 → 生图
         ctx.slots.register(
           { name: 'settings.section', id: SECTION_ID, order: 45, label: () => t('nav'), locale: NS, inject: () => ({ t }) },
-          () => h(SettingsPage, { t }),
+          () => h(SettingsPage, { t, pickDirectory }),
         )
 
         ctx.slots.register(
@@ -2391,7 +2482,7 @@ window.__ModuleLoader__.load({
         // 插件详情页里的配置页（只有整页视图才渲染，避免和摘要重复）。
         ctx.slots.register(
           { name: 'plugins.bundle.config', key: PKG, locale: NS, inject: () => ({ t }) },
-          (props) => (props?.view === 'page' ? h(SettingsPage, { t }) : null),
+          (props) => (props?.view === 'page' ? h(SettingsPage, { t, pickDirectory }) : null),
         )
 
         // 插件卸载时把侧栏面板让回给对话页，避免停在空白面板上。

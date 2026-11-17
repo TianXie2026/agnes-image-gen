@@ -70,7 +70,7 @@ API Key **不会明文保存**：保存时用 Windows DPAPI 加密（仅当前 W
 | 默认画图模型 / 默认尺寸 / 默认比例 | 面板与工具的初值 |
 | 提示词优化模型 | 优化按钮调用的对话模型，默认 `agnes-3.0-flash`；可换 `agnes-2.5-flash` / `agnes-2.5-pro` |
 | 请求超时 | 30–600 秒，默认 300 |
-| 输出目录 | 绝对路径；可「打开文件夹」 |
+| 输出目录 | 绝对路径；可「选择…」用系统文件夹选择框，或「打开文件夹」；下方显示当前生效目录、未设置时的默认目录与空闲空间 |
 | 诊断 | 凭据服务、DPAPI、是否还有旧版明文 key / 旧版 Base URL、上次迁移结果 |
 
 ## 数据存在哪
@@ -113,8 +113,22 @@ API Key **不会明文保存**：保存时用 Windows DPAPI 加密（仅当前 W
 
 - 本版为第一个公开发布；更早的 0.2–0.4 只在本机迭代过，没有公开包。
 - 本机旧版升级：包名从 `@local/agnes-image-gen` 改为 `@tianxie2026/agnes-image-gen`，需卸载后重装一次（行 id 仍是 `agnes-image-gen`，来源与密钥记录保留）。
-- 插件包不再预置 `baseUrl`/`apiKey`；未配置 `outputDir` 时输出到 `~\Pictures\agnes-image`。
+- 插件包不再预置 `baseUrl`/`apiKey`；未配置 `outputDir` 时按下面「默认输出目录」的规则选目录。
 - 旧版单一 `baseUrl` + `agnes-image-gen/api-key` 记录会在第一次打开面板时自动迁移成默认来源（迁移在请求里做，因为插件激活期处于 Loader 的 HMR 事务中，不能写配置）；失败只记 `诊断 → 上次迁移`。
+
+## 默认输出目录（v0.5.1 起）
+
+- 未配置 `outputDir` 时：枚举 D–Z 盘，按 `statfs` 的空闲空间降序，选第一个盘生成 `<盘>:\Pictures\agnes-image`（例如 `D:\Pictures\agnes-image`）。
+- 没有可用数据盘（只有 C 盘）或非 Windows：回落到 `~\Pictures\agnes-image`。
+- 结果缓存 5 分钟；缓存的盘符消失（拔盘）会自动重算。设置页保存配置时也会刷新缓存。
+- `/state` 新增 `outputDirSource`（`config`/`default`）、`defaultOutputDir`、`defaultOutputFreeBytes`，供设置页显示。
+- 已配置 `outputDir` 的机器行为不变；默认值不会自动写进配置，避免静默改配置。
+
+## 版本说明（0.5.1）
+
+- 默认输出目录改为「空闲最大的非 C 盘 + `\Pictures\agnes-image`」，只有 C 盘时回落家目录 Pictures。
+- 设置页与首次配置卡新增「选择…」按钮（系统原生文件夹选择框），显示当前生效目录与默认目录空闲空间。
+- 无需迁移：已配置的 `outputDir` 保持不变；包名、配置键、密钥记录格式均未变。
 
 ## 限制
 
